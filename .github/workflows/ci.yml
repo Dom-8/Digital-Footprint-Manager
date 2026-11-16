@@ -1,8 +1,9 @@
-name: Prototype checks
+name: Prototype checks and deployment
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -30,3 +31,28 @@ jobs:
         with:
           name: digital-footprint-manager-dist
           path: dist
+      - name: Upload verified website for Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: dist
+  deploy:
+    name: Publish website
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6.0.0
+      - name: Deploy verified website
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
