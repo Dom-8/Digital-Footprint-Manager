@@ -20,7 +20,15 @@ npm run build
 npm run preview
 ```
 
-The production files are in `dist/`. Hash-based routing and relative assets support static hosting, including a GitHub Pages subdirectory. Hosting has not been enabled automatically.
+The production files are in `dist/`. Hash-based routing and relative assets support static hosting, including a GitHub Pages subdirectory. The workflow publishes the verified production bundle to GitHub Pages after all engine, build and browser checks pass on `main`. Pull requests run checks without deploying.
+
+## Website deployment
+
+One-time setup: open [Settings → Pages](https://github.com/Dom-8/Digital-Footprint-Manager/settings/pages), then under **Build and deployment → Source** select **GitHub Actions**. The GitHub connector cannot change this repository setting.
+
+After enabling Pages, open [Prototype checks and deployment](https://github.com/Dom-8/Digital-Footprint-Manager/actions/workflows/ci.yml), choose **Run workflow**, select `main`, and run it. If the initial automatic run already failed because Pages was disabled, you can instead rerun its failed jobs.
+
+After **Publish website** succeeds, open https://dom-8.github.io/Digital-Footprint-Manager/. Later pushes to `main` update the website automatically after successful checks. No hosting token or external hosting account is needed. The deployed site uses sample data and stores decisions only in the visitor's browser.
 
 ## Included
 
