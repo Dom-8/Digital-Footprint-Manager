@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 test('teacher journey, saved decisions, complete routes and responsive layouts',async({page})=>{
   const failures:string[]=[];
-  page.on('pageerror',error=>failures.push(error.message));
+  page.on('pageerror',error=>{failures.push(error.message);console.log('Browser runtime error:',error.message);});
   await page.setViewportSize({width:1440,height:1000});
   await page.goto('/');
   const dialog=page.getByRole('dialog');
@@ -52,3 +52,4 @@ test('teacher journey, saved decisions, complete routes and responsive layouts',
   }
   expect(failures).toEqual([]);
 });
+test.afterEach(async({page},info)=>{if(info.status!==info.expectedStatus)console.log('Page at failure:',(await page.locator('body').innerText()).slice(0,12000));});
