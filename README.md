@@ -66,7 +66,16 @@ The production files are in `dist/`. Hash-based routing and relative assets supp
 
 `npm test` covers dataset integrity, industry differences, serious concern handling, review count reconciliation, platform scope, monitoring and reversible hiding. GitHub Actions runs these checks and builds TypeScript/Vite on main pushes.
 
-The automated engine tests and TypeScript/Vite production build run remotely in GitHub Actions; see the latest [Prototype checks run](https://github.com/Dom-8/Digital-Footprint-Manager/actions). The authoring session has no executable workspace, so local browser verification was unavailable. Responsive rules target 375px mobile, 768px tablet and 1440px desktop; actual browser checks are still needed.
+The [verified source run](https://github.com/Dom-8/Digital-Footprint-Manager/actions/runs/43974275290) passed all four engine tests, strict TypeScript compilation, the Vite production build and an automated Chromium browser journey. Browser checks cover onboarding, context entry, review-count updates, persistence after refresh, every page route, mobile navigation and horizontal-overflow checks at 375px, 768px and 1440px. Dashboard screenshots and the production bundle are available in that run’s artifacts. Human visual review and broader cross-browser testing remain useful.
+
+To repeat the browser checks locally:
+
+```sh
+npx playwright install chromium
+npm run test:e2e
+```
+
+The workflow uses actions with Node.js 24 runtimes. Earlier failed runs were resolved by explicit navigation types and accessible names on review selectors.
 
 ## Honest limitations
 
