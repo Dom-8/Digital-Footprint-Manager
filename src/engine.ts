@@ -5,7 +5,7 @@ export const resolved=(s?:string)=>s==='Reviewed'||s==='Dismissed';
 export function analyse(post:Post, industryId:string, decision:Decision={},occupation=''){
 const industry=industries.find(i=>i.id===industryId)||industries[9];
 const responsibilities=roleResponsibilities(occupation);
-const relevant=(occupation&&responsibilities.length?[...roleCategories(occupation),'credentials','consistency']:industry.categories).includes(post.category);
+const relevant=(occupation&&responsibilities.length?[...roleCategories(occupation),'privacy','confidentiality','credentials','consistency']:industry.categories).includes(post.category);
 let priority:Priority='No concern identified';
 if(post.category!=='ordinary'){
 priority= relevant ? (['privacy','confidentiality'].includes(post.category)&&post.visibility==='Public'?'High priority':['creative','humour','ambiguous','misattributed'].includes(post.category)?'Context needed':'Medium priority') : ['creative','humour','ambiguous','misattributed'].includes(post.category)?'Context needed':'Low priority';
