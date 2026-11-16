@@ -66,7 +66,7 @@ The production files are in `dist/`. Hash-based routing and relative assets supp
 
 `npm test` covers dataset integrity, industry differences, serious concern handling, review count reconciliation, platform scope, monitoring and reversible hiding. GitHub Actions runs these checks and builds TypeScript/Vite on main pushes.
 
-The authoring session has no executable workspace, so local build and browser verification were unavailable. Check the Actions result before treating compilation as verified. Responsive rules target 375px mobile, 768px tablet and 1440px desktop; actual browser checks are still needed.
+The automated engine tests and TypeScript/Vite production build run remotely in GitHub Actions; see the latest [Prototype checks run](https://github.com/Dom-8/Digital-Footprint-Manager/actions). The authoring session has no executable workspace, so local browser verification was unavailable. Responsive rules target 375px mobile, 768px tablet and 1440px desktop; actual browser checks are still needed.
 
 ## Honest limitations
 
