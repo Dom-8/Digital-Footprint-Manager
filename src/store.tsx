@@ -30,7 +30,7 @@ setCompleted(old=>({persona:state.persona,industry:raw.industry,occupation:raw.o
 },250);return()=>{clearTimeout(timer);++analysisVersion.current;};},[analysisKey]);
 async function api(action:string,method='GET'){
 const r=await fetch('/api/connection?action='+action,{method,headers:method==='POST'?{'X-DFM-Request':'1'}:{},credentials:'same-origin',cache:'no-store'});
-if(!(r.headers.get('content-type')||'').includes('application/json'))throw Error('We couldn't reach account connections. You can import an archive or try again shortly.');
+if(!(r.headers.get('content-type')||'').includes('application/json'))throw Error('We couldn’t reach account connections. You can import an archive or try again shortly.');
 const d=await r.json();if(!r.ok){const e=new Error(d.error||'Connection request failed.') as Error&{retryAfter?:number};e.retryAfter=d.retryAfter;throw e;}return d;
 }
 async function refreshConnection(){const v=++connectionCheckVersion.current;setConnectionChecking(true);setConnectionError('');try{const d=await api('status');if(v===connectionCheckVersion.current)setConnection(d);}catch(e){if(v===connectionCheckVersion.current)setConnectionError((e as Error).message);}finally{if(v===connectionCheckVersion.current)setConnectionChecking(false);}}
