@@ -148,7 +148,7 @@ casey:[
 ]};
 export const posts:Post[]=personas.flatMap(person=>seeds[person.id].map((s,i)=>({
 id:person.id+'-'+i,persona:person.id,platform:s[2]||person.platforms[i%person.platforms.length],
-date:i>=26?'2026-11-'+String(17+i-26).padStart(2,'0'):String(2017+Math.floor(i*9/26))+'-'+String(i%12+1).padStart(2,'0')+'-'+String(i%25+1).padStart(2,'0'),
+date:i>=26?'2026-11-'+String(17+i-26).padStart(2,'0'):(i<8?(s[1]==='humour'||s[1]==='creative'?'2019':'2025'):String(2017+Math.floor((i-8)*9/18)))+'-'+String(i%12+1).padStart(2,'0')+'-'+String(i%25+1).padStart(2,'0'),
 text:s[0],category:s[1]||'ordinary',type:(['Post','Comment','Video','Repost'] as const)[i%4],
 visibility:i%9===0&&i>8?'Private':'Public',
 missing:s[3]||'Surrounding conversation, ownership, permissions and intended audience have not been verified.',
