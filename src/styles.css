@@ -31,3 +31,20 @@ h1,h2,h3{letter-spacing:-.025em}h1{line-height:1.12}.eyebrow{color:#0f766e}
 [data-theme=dark] .career-hero,[data-theme=dark] .analysis-status{background:#19362f;color:#e0eee8;border-color:#3b6055}[data-theme=dark] body{background:#111b28}[data-theme=dark] .badge.neutral{background:#334155;color:#e2e8f0}
 @media(max-width:767px){.career-hero{flex-direction:column;align-items:flex-start;padding:20px}.career-hero h2{font-size:23px}.analysis-status{padding:12px 18px}.analysis-status small{margin-left:0;width:100%}.report{padding:20px}.career-trigger{width:100%}.career-bar{align-items:stretch}.career-results{max-height:40vh}}
 @media print{@page{size:A4;margin:18mm 16mm}.analysis-status,.analysis-loading,.connection-panel{display:none!important}.report{padding:0;max-width:none}.report h1{font-size:24pt}.report h2{break-after:avoid;font-size:14pt}.report p{orphans:3;widows:3}.report .table-scroll{overflow:visible}.report table{min-width:0!important;width:100%;table-layout:fixed;font-size:8pt}.report thead{display:table-header-group}.report tr{break-inside:avoid}.report .badge{font-size:8pt}.report-breakdown{grid-template-columns:repeat(5,1fr)}.report-breakdown .priority-card{padding:6px!important}.report-brand{color:#172b4d}body{background:white!important}}
+
+/* Clear next steps with optional detail */
+.help-disclosure{margin:18px 0;padding:14px 0;border-top:1px solid var(--border);color:var(--text)}
+.help-disclosure>summary{cursor:pointer;font-weight:600;line-height:1.5;outline-offset:5px}
+.help-disclosure>summary:focus-visible{outline:3px solid var(--accent)}
+.help-disclosure[open]>summary{margin-bottom:14px}
+.help-disclosure p,.help-disclosure li{max-width:68ch}
+.technical-details{margin-top:16px;font-size:12px;color:var(--muted)}
+.technical-details p{overflow-wrap:anywhere}
+.connection-unavailable{padding:4px 0}.connection-unavailable h3{font-size:18px;line-height:1.4;max-width:36ch}
+.connection-account{font-weight:650;color:var(--accent)}
+.connection-feedback{border-left:3px solid var(--accent);padding:10px 14px;background:var(--secondary);border-radius:6px}
+.quiet-action{font-size:12px}.review-advice{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.review-advice .card{margin-bottom:0}.review-advice h3{font-size:17px}.review-advice p{font-size:14px;line-height:1.75}
+.review-advice .next-step{border-top:3px solid var(--accent);background:var(--secondary)}
+.other-platforms{margin-top:0}
+@media(max-width:767px){.review-advice{grid-template-columns:1fr}.connection-unavailable .actions{align-items:stretch}.connection-unavailable .actions>button{width:100%}}

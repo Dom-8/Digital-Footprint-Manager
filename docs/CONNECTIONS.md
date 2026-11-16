@@ -2,6 +2,19 @@
 
 The browser app now supports separate demo, imported and connected data sources. Mastodon integration code is implemented; live OAuth has **not** been verified with an actual user and deployment credentials. Automated tests use mocked provider and storage responses.
 
+## Why you might see “Account connections aren't ready”
+
+The website can be deployed successfully while account connections are still unconfigured. This is an owner setup task, not a problem with the visitor's social account.
+
+Three things are needed:
+- **A Mastodon app:** choose the server and register the app to get its client ID and secret.
+- **Secure storage:** create private Redis storage and an encryption key so access credentials can stay on the server.
+- **The website address:** register the callback URL and add the server settings in Vercel.
+
+The app now keeps variable names under optional technical details. It offers archive import while setup is incomplete, and only shows authorisation when the server reports that configuration is present. Presence alone does not verify that the credentials work.
+
+Private credentials cannot be inferred from the GitHub repository. Add them directly in Vercel; do not paste passwords or secrets into chat. Follow the exact steps below.
+
 ## Vercel setup
 
 1. Keep the Vite preset, build command `npm run build`, output `dist`. Vercel discovers `api/connection.mjs` as a server function. GitHub Pages remains usable for demo/import/report features but cannot run OAuth.
