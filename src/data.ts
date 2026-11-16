@@ -1,3 +1,4 @@
+import {additionalFields,extraRoles} from './careers';
 import type {Category, Industry, Persona, Post} from './types';
 export const platforms=['Instagram','TikTok','Facebook','X','LinkedIn','Reddit','YouTube','Spotify','Bandcamp'];
 export const categories:Record<Category,string>={privacy:'Student, patient or client privacy',communication:'Professional communication',safety:'Safety-related statements',credentials:'Qualification claims',consistency:'Professional information consistency',confidentiality:'Workplace confidentiality',conflict:'Public disputes',creative:'Artistic expression',humour:'Historical humour or satire',ambiguous:'Ambiguous claims',misattributed:'Account attribution',ordinary:'No apparent professional concern'};
@@ -13,6 +14,8 @@ export const industries:Industry[]=[
 {id:'law',name:'Law and Legal Services',occupations:['Graduate Solicitor','Paralegal','Legal Administrator'],focus:'Client confidentiality and professional authority',categories:['privacy','confidentiality','credentials','consistency'],guidance:'Review whether case references use public, fictional or confidential material. No breach can be concluded from an excerpt alone.'},
 {id:'general',name:'General / Undecided',occupations:['Exploring career options'],focus:'Public visibility and accurate professional information',categories:['privacy','confidentiality','credentials','consistency','misattributed'],guidance:'Start with account ownership, visibility and profile accuracy. Occupational relevance varies with actual responsibilities.'}
 ];
+industries.push(...additionalFields);
+for(const field of industries)field.occupations=[...new Set([...field.occupations,...(extraRoles[field.id]||[])])];
 export const personas:Persona[]=[
 {id:'alex',name:'Alex Morgan',age:22,industry:'education',occupation:'Graduate Teacher',platforms:['Instagram','TikTok','Facebook','LinkedIn','Reddit'],milestone:'2023 · Began teacher training'},
 {id:'jordan',name:'Jordan Lee',age:25,industry:'healthcare',occupation:'Registered Nurse',platforms:['Instagram','Facebook','LinkedIn','X'],milestone:'2023 · Completed nursing degree'},

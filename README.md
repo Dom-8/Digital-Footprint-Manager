@@ -2,7 +2,7 @@
 
 **Your past deserves context. Your future deserves opportunity.**
 
-A complete browser-local SaaS demonstration for exploring historical online content through occupational context. All accounts, posts, analysis and monitoring are simulated. No credentials or employer access.
+A career-focused review workspace with separate demo, archive-import and connected-account sources. Demo posts are fictional; imported and connected text is analysed by narrow transparent rules. Mastodon backend code is implemented, but a live account connection requires deployment configuration and has not yet been verified. No employer access.
 
 ## Run
 
@@ -30,18 +30,30 @@ After enabling Pages, open [Prototype checks and deployment](https://github.com/
 
 After **Publish website** succeeds, open https://dom-8.github.io/Digital-Footprint-Manager/. Later pushes to `main` update the website automatically after successful checks. No hosting token or external hosting account is needed. The deployed site uses sample data and stores decisions only in the visitor's browser.
 
+## Context Studio update
+
+- 18 career fields, searchable roles, students/apprentices/graduates, and custom roles with saved descriptions.
+- Role responsibilities change relevance, priority, explanation and next actions. Latest-only reassessment displays loading/completion and changed assessments while preserving decisions and overrides.
+- Red/amber/blue priority outlines with visible labels/icons; reviewed/dismissed items use neutral grey.
+- Current-scope report preview, structured downloadable PDF with repeating table headers/page numbers, CSV and print styles. Review filters transfer directly to reports.
+- Mastodon OAuth code flow with state and S256 PKCE, encrypted Redis sessions, read-only account/status retrieval, cursor pagination, rate-limit recovery and revocation/deletion.
+- Validated official Mastodon outbox.json imports, processed locally. Separate sources never silently fall back to demo posts.
+- Navy, warm white and teal identity, career summary, connection controls and responsive layouts.
+
+**Deployment:** the frontend remains compatible with static hosting. The real connection requires the Vercel backend and all server variables in [.env.example](.env.example). Follow [connection setup and platform restrictions](docs/CONNECTIONS.md). No credentials have been configured by this change. The repository-connected Vercel deployment should rebuild on pushes to main.
+
 ## Included
 
 - React, TypeScript, Vite, Tailwind foundation with custom accessible components, Lucide icons, Recharts and React Router.
 - Eleven complete navigation pages, responsive sidebar, five-step onboarding and product tour.
-- Four fictional personas, 116 individually authored posts (104 initial records and 12 monitoring records), nine demo platforms and ten industry profiles.
+- Four fictional personas, 116 individually authored posts (104 initial records and 12 monitoring records), nine demo platforms and eighteen industry profiles.
 - Deterministic industry-aware analysis with category relevance, qualitative uncertainty, private visibility and historical timing.
 - Context Lens with balanced interpretations, editable context, original versus revised priority, manual overrides and cautious next steps.
 - Combinable search, platform, priority, relevance, date, type, category, status and visibility filters; sorting; bulk actions; confirmation; reversible simulated archive/delete.
 - State-derived dashboard counts, clickable platform/year charts, chronological history and milestones.
 - Industry comparison, readiness checklist, scenario considerations and editable CV/LinkedIn date consistency.
 - One bounded demo scan per persona, notification history, simulated frequency preferences and reset.
-- Filtered report previews, CSV export, browser printing / Save as PDF and JSON decision export.
+- Filtered report previews, direct PDF download, CSV export, browser printing and JSON decision export.
 - Versioned localStorage with malformed-state recovery, per-persona decisions, light/dark appearance, density and reduced motion preferences.
 
 ## Best demonstration route
@@ -87,11 +99,11 @@ The workflow uses actions with Node.js 24 runtimes. Earlier failed runs were res
 
 ## Honest limitations
 
-- Analysis uses authored metadata, not AI, NLP, actual social media or verified facts.
+- Demo analysis uses authored metadata. Real/imported text uses narrow explicit cues. No AI or verified-fact service is called; unflagged content is not verified.
 - Monitoring runs only when requested in the open app; frequency preferences are illustrative and create no real scheduled tasks.
-- All posts are text-based examples, including records labelled video/repost. There are no actual media files.
+- Demo posts are text-based examples, including video/repost labels. Imported/connected media is not downloaded or analysed.
 - Context notes are unverified. They can moderate a context-needed item, but never automatically resolve privacy or credential concerns.
-- Reports reflect current state and filters; PDF output uses the browser print dialog, not a dedicated PDF generator.
+- Reports reflect current state and filters; PDF uses jsPDF/AutoTable with pagination. Media, deleted posts and unloaded API pages are not included.
 - Persistence is confined to the current browser and origin, without cloud accounts or cross-device sync.
 - Undo restores the preceding profile action in the current session; removed samples can also be restored through Content Review.
 - Digital identity and Connected Platforms share the same management workspace.
@@ -100,3 +112,10 @@ The workflow uses actions with Node.js 24 runtimes. Earlier failed runs were res
 ## Fairness
 
 Review priorities indicate possible manual-review questions. No hiring probabilities, character scores, protected-characteristic categories or invented professional rules are used. Employer practices differ. Historical content, lawful opinions and creative work must be considered with context.
+
+## Checks for this update
+
+`npm test` covers career relevance, source isolation, import validation and filtered report models.
+`npm run test:server` exercises mocked OAuth, PKCE, encrypted storage, state replay/tampering, cursor restrictions, rate-limit handling, CSRF rejection and disconnect.
+`npm run test:e2e` exercises the existing demo journey and the new picker, saved decisions, priority outlines, source isolation, archive import/delete, connection failure recovery and PDF/CSV downloads.
+These automated checks do not verify live Mastodon authorisation or platform permissions. Follow the real-account checklist in docs/CONNECTIONS.md after configuration.
