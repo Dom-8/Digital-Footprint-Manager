@@ -77,3 +77,11 @@ await setup.getByRole('button',{name:'Continue to accounts'}).click();await expe
 await expect(setup.getByRole('button',{name:'Continue with my posts'})).toBeDisabled();await expect(setup.getByRole('button',{name:'Demo data',exact:true})).toHaveCount(0);
 await setup.getByRole('button',{name:'Save & exit'}).click();await page.getByRole('button',{name:'Tutorial',exact:true}).click();await expect(setup.getByRole('heading',{name:'Bring your own posts into the picture.'})).toBeVisible();
 });
+
+test('source buttons prompt connection and archive selection',async({page})=>{
+await page.goto('/');await page.getByRole('button',{name:'Explore on my own'}).click();await page.goto('/#/platforms');
+await page.getByRole('button',{name:'Connected account',exact:true}).click();
+const dialog=page.getByRole('dialog',{name:'Connect your Mastodon account'});await expect(dialog).toBeVisible();await expect(dialog.getByRole('button',{name:'Check again',exact:true})).toBeVisible();
+await dialog.getByRole('button',{name:'Close connection setup'}).click();await expect(dialog).toHaveCount(0);
+const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'Imported archive',exact:true}).click();const picker=await chooser;expect(picker.isMultiple()).toBe(false);
+});
