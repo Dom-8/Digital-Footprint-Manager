@@ -17,7 +17,7 @@ await expect(first.getByText('Reviewed',{exact:true}).first()).toBeVisible();awa
 await page.reload();await expect(first).toHaveClass(/priority-neutral/);await expect(page.locator('.analysis-status')).toContainText('Civil Engineer');
 });
 test('official archive import, source isolation, PDF/CSV and deletion',async({page})=>{
-await page.goto('/#/platforms');await expect(page.getByText('Setup required',{exact:true})).toBeVisible();await expect(page.getByRole('heading',{name:\"Account connections aren't ready on this site yet.\"})).toBeVisible();await expect(page.getByRole('button',{name:'Authorise with Mastodon'})).toHaveCount(0);await expect(page.getByText(/Still needed: MASTODON_CLIENT_ID/)).not.toBeVisible();
+await page.goto('/#/platforms');await expect(page.getByText('Setup required',{exact:true})).toBeVisible();await expect(page.getByRole('heading',{name:"Account connections aren't ready on this site yet."})).toBeVisible();await expect(page.getByRole('button',{name:'Authorise with Mastodon'})).toHaveCount(0);await expect(page.getByText(/Still needed: MASTODON_CLIENT_ID/)).not.toBeVisible();
 await page.getByLabel('Import outbox.json').setInputFiles({name:'outbox.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(archive))});
 await expect(page.getByText('1 imported posts saved in this browser.',{exact:false})).toBeVisible();
 await page.goto('/#/review');await expect(page.locator('.post-row')).toHaveCount(1);await expect(page.locator('.post-row')).toContainText('access code: 1234');
