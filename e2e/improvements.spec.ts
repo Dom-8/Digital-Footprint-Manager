@@ -55,3 +55,20 @@ await page.getByRole('button',{name:'Check again',exact:true}).click();
 await expect(page.getByText('Ready to connect',{exact:true})).toBeVisible();await expect(page.getByRole('alert')).toHaveCount(0);
 await expect(page.getByRole('button',{name:'Authorise with Mastodon'})).toBeDisabled();
 });
+
+test('dashboard scan updates every view once and remains separate from live data',async({page})=>{
+const metric=page.getByText('Posts in scope',{exact:true}).locator('../..').locator('.metric-value');
+const count=Number(await metric.textContent());
+await page.getByRole('button',{name:'Run demo scan',exact:true}).click();
+await expect(page.getByRole('button',{name:'Demo scan completed',exact:true})).toBeDisabled();
+await expect(metric).toHaveText(String(count+3));
+await page.reload();await expect(metric).toHaveText(String(count+3));
+await page.goto('/#/monitoring');await expect(page.getByRole('button',{name:'Demo scan completed',exact:true})).toBeDisabled();
+await expect(page.getByText('Demo scan completed:',{exact:false})).toHaveCount(1);
+page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Reset demo scan',exact:true}).click();
+await page.goto('/');await expect(metric).toHaveText(String(count));await expect(page.getByRole('button',{name:'Run demo scan',exact:true})).toBeEnabled();
+await page.getByText('Explore platforms and history',{exact:false}).click();await expect(page.getByLabel('Chart content scope')).toBeVisible();
+await page.goto('/#/platforms');await page.getByRole('button',{name:'Imported archive',exact:true}).click();
+await page.goto('/');await expect(page.getByRole('button',{name:'Run demo scan',exact:true})).toBeDisabled();
+await expect(page.getByText('Demo scans are available when Demo data is selected.',{exact:false})).toBeVisible();
+});
