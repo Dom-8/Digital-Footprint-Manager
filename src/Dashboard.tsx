@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState,useEffect,useRef} from 'react';
 import {Link,useNavigate} from 'react-router-dom';
 import {ArrowRight,ArrowUpRight,CheckCheck,Layers,ScanEye,RefreshCw,Briefcase,Link2,BookOpen} from 'lucide-react';
 import {ResponsiveContainer,PieChart,Pie,Cell,Tooltip,BarChart,Bar,XAxis,YAxis} from 'recharts';
@@ -25,21 +25,11 @@ const weights:Record<string,number>={'High priority':3,'Medium priority':2,'Cont
 const totalWeight=items.reduce((sum,x)=>sum+(weights[assessment(x).priority]||0),0);
 const remainingWeight=pending.reduce((sum,x)=>sum+(weights[assessment(x).priority]||0),0);
 const burden=totalWeight?remainingWeight/totalWeight:0;
-const footprintColour=items.length?`rgb(${Math.round(99+118*burden)}, ${Math.round(156-58*burden)}, ${Math.round(232-134*burden)})`:'#737373';
 const first=pending[0];const hour=new Date().getHours();const greeting=hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
 const chartLink=(platform:string)=>'/review?platform='+encodeURIComponent(platform)+(mode==='Items requiring review'?'&unresolved=yes':mode==='Reviewed items'?'&status=Reviewed':mode==='Dismissed items'?'&status=Dismissed':'');
 function wheelClick(name:string){nav(name==='Reviewed'?'/review?resolved=yes':'/review?unresolved=yes&priority='+encodeURIComponent(name));}
 return <div className="dashboard-clear">
-<div className="dashboard-focus"><section className="dashboard-intro" aria-label="Your next step"><div className="footprint-indicator" role="img" aria-label={items.length?`Footprint review: ${pending.length} items remaining, ${Math.round((1-burden)*100)} percent of weighted priorities resolved`:'Footprint review: no posts loaded'} style={{float:'right',width:'clamp(90px, 11vw, 150px)',margin:'0 0 16px 20px',textAlign:'center'}}>
-<svg viewBox="0 0 160 250" width="100%" height="190" aria-hidden="true" style={{color:footprintColour}}>
-<g fill="currentColor" style={{transition:'color 300ms ease'}}>
-<ellipse cx="108" cy="30" rx="23" ry="29" transform="rotate(15 108 30)"/>
-<ellipse cx="65" cy="36" rx="15" ry="21" transform="rotate(-10 65 36)"/>
-<ellipse cx="35" cy="53" rx="12" ry="17" transform="rotate(-25 35 53)"/>
-<ellipse cx="17" cy="78" rx="10" ry="14" transform="rotate(-30 17 78)"/>
-<ellipse cx="12" cy="104" rx="8" ry="11"/>
-<path d="M35 87 C52 64 108 64 127 91 C147 121 119 145 103 166 C90 184 107 209 92 231 C77 253 42 245 38 222 C34 202 47 180 40 157 C30 134 17 111 35 87 Z"/>
-</g></svg><strong style={{display:'block',fontSize:13}}>Your footprint</strong><span style={{display:'block',fontSize:12,color:'var(--muted)',marginTop:5}}>{!items.length?'Add posts to begin':pending.length?`${pending.length} to review`:'Review complete'}</span></div><p className="greeting">{greeting}, {p.name.split(' ')[0]||'there'}.</p><h1 aria-label="Your history. Your next step.">Your history.<br/>Your next step.</h1><p className="purpose">Understand old posts in the context of your next career. Review what needs attention, add context and decide what to change.</p><div className="hero-actions"><Link className="primary hero-primary" to={first?'/review?unresolved=yes&open='+encodeURIComponent(first.id):items.length?'/review':'/platforms'}>{first?'Review your next post':items.length?'Explore your posts':'Add your posts'} <ArrowRight size={18}/></Link><button className="hero-tutorial" onClick={start}><BookOpen size={16}/> {state.tutorialDone?'Replay tutorial':'Start tutorial'}</button></div><p className="fine">{first?m.unresolved+' items are waiting for your review.':items.length?'You’ve reviewed everything flagged in this view.':'Start with a demo, import an archive or connect an account.'}</p></section>
+<div className="dashboard-focus"><section className="dashboard-intro" aria-label="Your next step"><p className="greeting">{greeting}, {p.name.split(' ')[0]||'there'}.</p><h1 aria-label="Your history. Your next step.">Your history.<br/>Your next step.</h1><p className="purpose">Understand old posts in the context of your next career. Review what needs attention, add context and decide what to change.</p><div className="hero-actions"><Link className="primary hero-primary" to={first?'/review?unresolved=yes&open='+encodeURIComponent(first.id):items.length?'/review':'/platforms'}>{first?'Review your next post':items.length?'Explore your posts':'Add your posts'} <ArrowRight size={18}/></Link><button className="hero-tutorial" onClick={start}><BookOpen size={16}/> {state.tutorialDone?'Replay tutorial':'Start tutorial'}</button></div><p className="fine">{first?m.unresolved+' items are waiting for your review.':items.length?'You’ve reviewed everything flagged in this view.':'Start with a demo, import an archive or connect an account.'}</p></section><Footprint burden={burden} count={pending.length} total={items.length} reduced={state.reduced}/>
 <Card className="priority-overview"><div className="section-head"><div><h2>Your review priorities</h2><p>Choose a section to see the posts.</p></div><span className="scope-label">{demo?'Sample posts':p.source==='imported'?'Imported posts':'Loaded posts'}</span></div><div className="priority-wheel-layout">{m.flagged?<div className="donut priority-wheel" aria-label={'Priority breakdown: '+wheel.map(x=>x.name+' '+x.value).join(', ')}><ResponsiveContainer width="100%" height={220}><PieChart><Pie data={wheel.filter(x=>x.value)} dataKey="value" nameKey="name" innerRadius={65} outerRadius={91} paddingAngle={3} stroke="none" onClick={(d:any)=>wheelClick(d.name)}>{wheel.filter(x=>x.value).map(x=><Cell key={x.name} fill={priorityColours[x.name]}/>)}</Pie><Tooltip contentStyle={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:6,color:'var(--text)'}} itemStyle={{color:'var(--text)'}}/></PieChart></ResponsiveContainer><div className="donut-centre"><strong>{m.unresolved}</strong><small>need review</small></div></div>:<div className="wheel-empty"><CheckCheck size={30}/><strong>No flagged posts in this view</strong><span>Check data coverage before drawing conclusions.</span></div>}<div className="priority-list">{wheel.map(x=><button className="priority-count" key={x.name} onClick={()=>wheelClick(x.name)} aria-label={x.name+': '+x.value+' posts'}><Badge value={x.name}/><strong>{x.value}</strong><ArrowUpRight size={13}/></button>)}</div></div></Card></div>
 <section className="next-steps-section" aria-labelledby="next-steps-title"><h2 id="next-steps-title">Three simple steps</h2><div className="task-path">
 <Link className="task-step" to="/industry"><span className="step-number">01</span><div><h3>Choose your career</h3><strong>{p.occupation}</strong><span>{industry.name}</span></div><ArrowUpRight size={17}/></Link>
@@ -54,3 +44,53 @@ return <div className="dashboard-clear">
 {p.events.length>0&&<section className="recent-activity"><h2>Recent activity</h2>{p.events.slice(0,3).map(e=><div className="activity" key={e.id}><span className="activity-dot"/><div>{e.text}<small>{new Date(e.date).toLocaleString('en-AU')}</small></div></div>)}</section>}
 {opened&&<Detail post={opened} onClose={()=>setOpened(null)}/>}
 </div>;}
+
+function Footprint({burden,count,total,reduced}:{burden:number;count:number;total:number;reduced:boolean}){
+const canvas=useRef<HTMLCanvasElement>(null);
+useEffect(()=>{
+const el=canvas.current;if(!el)return;const ctx=el.getContext('2d');if(!ctx)return;
+const W=600,H=300,dpr=Math.min(window.devicePixelRatio||1,2);
+el.width=W*dpr;el.height=H*dpr;ctx.scale(dpr,dpr);
+const shape=new Path2D();
+shape.ellipse(108,30,23,29,15*Math.PI/180,0,Math.PI*2);
+shape.ellipse(65,36,15,21,-10*Math.PI/180,0,Math.PI*2);
+shape.ellipse(35,53,12,17,-25*Math.PI/180,0,Math.PI*2);
+shape.ellipse(17,78,10,14,-30*Math.PI/180,0,Math.PI*2);
+shape.ellipse(12,104,8,11,0,0,Math.PI*2);
+shape.addPath(new Path2D('M35 87 C52 64 108 64 127 91 C147 121 119 145 103 166 C90 184 107 209 92 231 C77 253 42 245 38 222 C34 202 47 180 40 157 C30 134 17 111 35 87 Z'));
+const particles:{x:number;y:number;homeX:number;homeY:number;vx:number;vy:number;letter:string}[]=[];
+const letters='digitalfootprint';
+for(let y=8;y<245;y+=5)for(let x=6;x<145;x+=5){
+if(ctx.isPointInPath(shape,x*dpr,y*dpr)){const homeX=55+(245-y)*2,homeY=12+x*1.85;particles.push({x:homeX,y:homeY,homeX,homeY,vx:0,vy:0,letter:letters[(x*7+y*3)%letters.length]});}}
+const media=matchMedia('(prefers-reduced-motion: reduce)');
+let frame=0,previous=0,steps=0,pointer:{x:number;y:number}|null=null;
+const draw=()=>{
+ctx.clearRect(0,0,W,H);ctx.font='9px ui-monospace, SFMono-Regular, monospace';ctx.textAlign='center';
+for(const p of particles){
+const t=p.homeX/W;
+const red=[239,95+Math.round(t*50),105+Math.round(t*40)],blue=[80+Math.round(t*35),155+Math.round(t*45),245];
+ctx.fillStyle=total?'rgb('+blue.map((v,i)=>Math.round(v+(red[i]-v)*burden)).join(',')+')':'#888';
+ctx.globalAlpha=.58+.42*(p.homeY/H);ctx.fillText(p.letter,p.x,p.y);
+}ctx.globalAlpha=1;
+};
+const tick=(now:number)=>{
+const dt=Math.min((now-previous)/16.67||1,2);previous=now;let energy=0;
+for(const p of particles){
+let fx=(p.homeX-p.x)*.045,fy=(p.homeY-p.y)*.045;
+if(pointer){const dx=p.x-pointer.x,dy=p.y-pointer.y,d=Math.hypot(dx,dy);if(d<65&&d>0){const force=(1-d/65)*1.8;fx+=dx/d*force;fy+=dy/d*force;}}
+p.vx=(p.vx+fx*dt)*Math.pow(.83,dt);p.vy=(p.vy+fy*dt)*Math.pow(.83,dt);
+p.x+=p.vx*dt;p.y+=p.vy*dt;energy+=Math.abs(p.vx)+Math.abs(p.vy);
+}draw();steps++;frame=0;if(energy>.1&&steps<240)frame=requestAnimationFrame(tick);
+};
+const move=(e:PointerEvent)=>{if(reduced||media.matches||e.pointerType==='touch')return;
+const r=el.getBoundingClientRect();pointer={x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};steps=0;if(!frame){previous=performance.now();frame=requestAnimationFrame(tick);}};
+const leave=()=>{pointer=null;steps=0;if(!frame&&!reduced&&!media.matches){previous=performance.now();frame=requestAnimationFrame(tick);}};
+const reset=()=>{cancelAnimationFrame(frame);frame=0;pointer=null;for(const p of particles){p.x=p.homeX;p.y=p.homeY;p.vx=p.vy=0;}draw();};
+draw();el.addEventListener('pointermove',move);el.addEventListener('pointerleave',leave);media.addEventListener('change',reset);
+return()=>{cancelAnimationFrame(frame);el.removeEventListener('pointermove',move);el.removeEventListener('pointerleave',leave);media.removeEventListener('change',reset);};
+},[burden,total,reduced]);
+return <figure className="footprint-art" aria-label={total?`Your footprint: ${count} posts to review`:'Your footprint: no posts loaded'}>
+<canvas ref={canvas} aria-hidden="true"/>
+<figcaption><strong>Your footprint</strong><span>{!total?'Add posts to begin':count?`${count} posts to review`:'Review complete'}</span></figcaption>
+</figure>;
+}
