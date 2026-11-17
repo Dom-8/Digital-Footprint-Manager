@@ -192,3 +192,164 @@ footer{color:var(--muted);border-color:var(--border)}
 :root[data-theme] .priority-badge.amber{color:#855000;background:#fff;border-color:#a76505}
 :root[data-theme] .priority-badge.blue{color:#214f92;background:#fff;border-color:#2763b6}
 }
+
+/* Guided workspace: one task at a time, explicit navigation and visible charts. */
+.clarity-shell{--sidebar-width:232px;--section-line:#494949}
+:root[data-theme=light] .clarity-shell{--section-line:#c6c6c6}
+.clarity-shell.sidebar-collapsed{--sidebar-width:76px}
+.clarity-shell .sidebar{width:var(--sidebar-width);padding:20px 12px 0;transition:width .22s ease,border-color .16s ease;border-right:1px solid var(--section-line);background:var(--surface)}
+.clarity-shell .workspace{margin-left:var(--sidebar-width);width:calc(100% - var(--sidebar-width));min-width:0;transition:margin-left .22s ease,width .22s ease}
+.sidebar-brand{display:flex;align-items:center;min-height:58px;margin-bottom:22px}
+.clarity-shell .brand{gap:10px;padding:0 8px;font-size:15px;overflow:hidden;white-space:nowrap}
+.clarity-shell .brand-icon{flex:none;padding:5px}
+.clarity-shell .nav-text{min-width:0;transition:opacity .15s ease}
+.clarity-shell .brand small{font-size:8px;letter-spacing:2px}
+.clarity-shell .nav-group{margin-bottom:14px}
+.clarity-shell nav a,.clarity-shell .utility-nav a,.nav-more,.tutorial-launch{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:11px 12px;margin:3px 0;border:1px solid transparent;border-radius:6px;color:var(--muted);font-size:13px;line-height:1.4;white-space:nowrap;text-decoration:none;justify-content:flex-start}
+.clarity-shell nav a.active,.clarity-shell .utility-nav a.active{background:var(--secondary);color:var(--text);border-color:var(--section-line);font-weight:600}
+.clarity-shell nav a:hover,.nav-more:hover,.tutorial-launch:hover{background:var(--secondary);color:var(--text)}
+.nav-more,.tutorial-launch{background:transparent;font-weight:500}
+.clarity-shell #more-tools{padding-top:4px}.clarity-shell #more-tools[hidden]{display:none}
+.clarity-shell .sidebar-bottom{border-top:1px solid var(--border);padding-top:12px;margin-top:auto}
+.clarity-shell .profile{padding:14px 8px;gap:10px}.clarity-shell .profile .avatar{flex:none}
+.clarity-shell .utility-nav{margin-top:12px}.utility-nav a{font-size:12px!important}
+.clarity-shell.sidebar-collapsed .sidebar .nav-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.clarity-shell.sidebar-collapsed .brand{padding:0 6px}
+.clarity-shell.sidebar-collapsed nav a,.clarity-shell.sidebar-collapsed .utility-nav a,.clarity-shell.sidebar-collapsed .nav-more,.clarity-shell.sidebar-collapsed .tutorial-launch{justify-content:center;gap:0;padding:12px}
+.clarity-shell.sidebar-collapsed .profile{justify-content:center;padding:14px 0}
+.clarity-shell .topbar{min-height:80px;padding:14px 32px;gap:16px;background:var(--surface);border-bottom:2px solid var(--section-line)}
+.topbar-page{display:flex;align-items:center;gap:14px;min-width:0}
+.topbar-page>div{display:flex;flex-direction:column;gap:3px}
+.topbar-page strong{font-size:17px;line-height:1.3;font-weight:650;letter-spacing:-.02em}
+.topbar-page>div>span{font-size:12px;color:var(--muted)}
+.desktop-only{display:inline-flex}
+.header-tutorial{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--border);font-size:12px;padding:8px 10px}
+.clarity-shell .topbar-actions{gap:12px}
+.workspace-context{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:11px 32px;background:var(--bg);border-bottom:1px solid var(--section-line);min-height:43px}
+.context-source{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;padding-right:16px;border-right:1px solid var(--section-line)}
+.workspace-context .analysis-status{padding:0;border:0;background:transparent;font-size:11px;line-height:1.5;min-width:0;flex:1;gap:4px}
+.workspace-context .analysis-status small{display:none}
+.clarity-shell main{max-width:1440px;padding:36px 32px 48px}
+.dashboard-focus{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:36px;align-items:center;margin-bottom:38px}
+.dashboard-intro .greeting{font-size:13px;color:var(--muted);margin:0 0 20px}
+.dashboard-intro h1{font-size:clamp(36px,3.6vw,50px);line-height:1.05;letter-spacing:-.055em;font-weight:650;margin:0 0 22px;max-width:14ch}
+.dashboard-intro .purpose{font-size:15px;line-height:1.8;color:var(--muted);max-width:44ch;margin:0 0 24px}
+.hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.hero-actions .hero-primary{font-size:14px;min-height:44px;padding:12px 18px}
+.hero-tutorial{display:flex;align-items:center;gap:7px;font-size:12px;background:transparent;min-height:40px;padding:8px 10px}
+.dashboard-intro>.fine{margin-top:16px;max-width:44ch}
+.priority-overview{margin:0;padding:22px!important;border:1px solid var(--section-line)!important}
+.priority-overview .section-head{align-items:center;gap:12px;margin-bottom:8px}
+.priority-overview h2{font-size:17px;margin:0 0 5px}
+.priority-overview .section-head p{margin:0;color:var(--muted);font-size:11px}
+.scope-label{font-size:10px;border:1px solid var(--border);border-radius:4px;padding:4px 7px;color:var(--muted);white-space:nowrap}
+.priority-wheel-layout{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.priority-wheel{flex:0 1 200px;width:200px;min-width:170px}
+.priority-wheel .donut-centre{inset:77px 0 auto}
+.priority-wheel .donut-centre strong{font-size:33px}
+.priority-wheel .donut-centre small{font-size:11px}
+.priority-overview .priority-list{flex:1;min-width:155px;margin:0}
+.priority-count{display:flex;align-items:center;gap:8px;width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;text-align:left}
+.priority-count>.badge{flex:1;justify-content:flex-start;max-width:max-content;margin-right:auto}
+.priority-count strong{font-size:13px;min-width:12px;text-align:right}
+.priority-count>svg{color:var(--muted);flex:none}
+.priority-overview>.fine{border-top:1px solid var(--border);padding-top:12px;margin-top:8px;font-size:10px}
+.wheel-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px 10px;max-width:220px;color:var(--muted);text-align:center;font-size:12px}
+.wheel-empty strong{color:var(--text);font-weight:500}
+.next-steps-section{margin:0 0 28px}
+.next-steps-section>h2{font-size:14px;margin:0 0 13px;color:var(--muted);font-weight:500}
+.task-path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.task-step{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--border);background:var(--surface);border-radius:7px;padding:18px;color:var(--text);text-decoration:none;min-width:0}
+.task-step:hover{border-color:var(--muted);text-decoration:none;background:var(--secondary)}
+.step-number{font-size:11px;font-family:ui-monospace,monospace;color:var(--muted);padding-top:2px;flex:none}
+.task-step>div{flex:1;min-width:0}
+.task-step h3{font-size:13px;margin:0 0 10px}
+.task-step strong{display:block;font-size:12px;font-weight:500;overflow-wrap:anywhere}
+.task-step div>span{display:block;font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.task-step>svg{flex:none;color:var(--muted)}
+.clear-metrics{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:24px}
+.clear-metrics .card{margin:0;padding:20px 22px}
+.clear-metrics .metric-value{font-size:29px}
+.next-posts{margin-bottom:32px}
+.next-posts .recent-post{padding:16px!important;gap:14px}
+.next-posts .recent-post strong{font-size:12px;line-height:1.7}
+.next-posts .recent-post small{font-size:11px}
+.next-posts .post-open-arrow{flex:none;color:var(--muted)}
+.visible-insights{padding-top:26px;border-top:1px solid var(--section-line)}
+.visible-insights>.section-head{align-items:center;margin-bottom:20px}
+.visible-insights h2{font-size:18px}.visible-insights .section-head p{font-size:12px;color:var(--muted);margin-top:5px}
+.visible-insights>.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.scope-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 20px;padding:4px;background:var(--secondary);border:1px solid var(--border);border-radius:6px}
+.scope-tabs button{flex:1;white-space:nowrap;justify-content:center;font-size:11px;background:transparent;border:1px solid transparent;padding:6px 8px}
+.scope-tabs button[aria-pressed=true]{background:var(--surface);border-color:var(--section-line);color:var(--text)}
+.platform-bars button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;width:100%;border:0;border-bottom:1px solid var(--border);padding:12px 0;border-radius:0;background:transparent;text-align:left;font-size:12px}
+.platform-bars .track{grid-column:1/-1;height:4px;margin:0}
+.platform-bars .track>span{background:#a3a3a3}
+.demo-scan-row{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:6px}
+.demo-scan-row h3{font-size:14px;margin:0 0 6px}
+.demo-scan-row p{font-size:12px;color:var(--muted);margin:0;max-width:65ch}
+.demo-scan-row button{white-space:nowrap;display:flex;gap:8px;align-items:center;flex:none;padding:10px 13px;font-size:12px}
+.recent-activity{margin-top:28px}.recent-activity h2{font-size:15px}
+.tutorial-guide{border:1px solid var(--muted);background:var(--secondary);border-radius:8px;padding:20px 24px;margin-bottom:28px;max-width:100%}
+.tutorial-guide-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tutorial-guide-top>span{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650}
+.tutorial-progress{display:flex;flex-wrap:wrap;gap:14px;margin:15px 0 22px}
+.tutorial-progress>span{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.tutorial-progress .current{color:var(--text);font-weight:650}
+.tutorial-guide h2{font-size:20px;margin:0 0 8px}
+.tutorial-guide>p{font-size:13px;max-width:75ch;color:var(--muted)}
+.tutorial-actions{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-top:16px}
+.tutorial-actions .primary{font-size:13px}
+.tutorial-guide .tutorial-sample-note{margin:15px 0 0;font-size:10px}
+.tutorial-in-post{border:1px solid var(--muted);background:var(--secondary);padding:14px 16px;border-radius:6px;margin-bottom:20px}
+.tutorial-in-post strong{font-size:12px}.tutorial-in-post p{font-size:12px;margin:7px 0 0;color:var(--muted)}
+.welcome-simple{padding:8px 4px}
+.welcome-simple h1{font-size:40px;line-height:1.1;margin:18px 0;letter-spacing:-.045em}
+.welcome-simple>p{font-size:14px;line-height:1.8;color:var(--muted);max-width:64ch}
+.welcome-steps{list-style:none;padding:0;margin:24px 0 28px;display:flex;flex-direction:column;gap:18px}
+.welcome-steps li{display:flex;align-items:flex-start;gap:14px}
+.welcome-steps svg{flex:none;color:var(--text);margin-top:2px}
+.welcome-steps strong{display:block;font-size:14px}
+.welcome-steps span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.demo-profile-picker{margin-bottom:25px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.demo-profile-picker .career-options{margin-top:12px}
+.demo-profile-picker button{display:flex;flex-direction:column;align-items:flex-start;font-size:12px}
+.demo-profile-picker button small{font-size:10px;color:var(--muted)}
+.review-filter-details{margin:0;padding:10px 0 0}
+.active-filter-pills{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.active-filter-pills button{font-size:10px;padding:4px 8px;background:var(--secondary)}
+@media(max-width:1200px){.dashboard-focus{grid-template-columns:1fr;gap:24px;align-items:stretch}.dashboard-intro h1{max-width:none}.priority-wheel-layout{gap:24px;justify-content:flex-start}.priority-wheel{flex-basis:200px}.task-path{gap:10px}.task-step{padding:15px}}
+@media(max-width:767px){
+.clarity-shell{--sidebar-width:0px}
+.clarity-shell .workspace,.clarity-shell.sidebar-collapsed .workspace{margin-left:0;width:100%;transition:none}
+.clarity-shell .sidebar,.clarity-shell.sidebar-collapsed .sidebar{width:260px;transform:translateX(-100%);transition:transform .22s ease;padding:18px 12px 0;z-index:40}
+.clarity-shell .sidebar.open{transform:translateX(0)}
+.clarity-shell .sidebar .nav-text,.clarity-shell.sidebar-collapsed .sidebar .nav-text{position:static;width:auto;height:auto;clip:auto;overflow:visible;white-space:normal}
+.clarity-shell.sidebar-collapsed nav a,.clarity-shell.sidebar-collapsed .utility-nav a,.clarity-shell.sidebar-collapsed .nav-more,.clarity-shell.sidebar-collapsed .tutorial-launch{justify-content:flex-start;gap:12px}
+.clarity-shell.sidebar-collapsed .profile{justify-content:flex-start;gap:10px}
+.desktop-only{display:none!important}.mobile-only{display:inline-flex}
+.clarity-shell .topbar{min-height:72px;padding:12px 18px}
+.topbar-page{gap:10px}.topbar-page strong{font-size:15px}.topbar-page>div>span{display:none}
+.clarity-shell .topbar-actions{gap:6px}.header-tutorial{padding:8px}.header-tutorial>span{display:none}
+.workspace-context{padding:10px 18px;gap:8px}.context-source{font-size:10px;padding-right:9px}.workspace-context .analysis-status{font-size:10px}
+.clarity-shell main{padding:26px 18px 38px}
+.dashboard-intro h1{font-size:38px}.dashboard-intro .greeting{margin-bottom:14px}
+.dashboard-intro .purpose{font-size:14px}
+.hero-actions{gap:8px}.hero-actions .hero-primary{padding:11px 14px;font-size:13px}
+.priority-overview{padding:18px!important}.priority-overview .section-head{flex-wrap:wrap}.priority-overview h2{font-size:16px}
+.priority-wheel-layout{gap:0}.priority-wheel{margin:auto;flex:0 0 100%;max-width:220px}.priority-overview .priority-list{flex:0 0 100%;min-width:0}
+.task-path{grid-template-columns:1fr}.task-step{padding:16px}.task-step h3{margin-bottom:6px}
+.clear-metrics{grid-template-columns:1fr;gap:0}.clear-metrics .card{display:grid;grid-template-columns:1fr auto;align-items:center;border-radius:0;border-bottom:0;padding:16px 18px}
+.clear-metrics .card:first-child{border-radius:7px 7px 0 0}.clear-metrics .card:last-child{border-radius:0 0 7px 7px;border-bottom:1px solid var(--border)}
+.clear-metrics .metric-value{font-size:26px;grid-column:2;grid-row:1/3}.clear-metrics .card>small{grid-column:1}
+.next-posts{padding:18px}.next-posts .recent-post{flex-wrap:wrap;padding:14px!important}.next-posts .recent-post>span:nth-child(2){min-width:160px}.next-posts .recent-post>.badge{margin-left:45px;max-width:none}.next-posts .post-open-arrow{margin-left:auto}
+.visible-insights>.dashboard-grid{grid-template-columns:1fr;gap:0}.visible-insights>.section-head{flex-wrap:wrap}
+.scope-tabs button{flex:1 1 40%}.demo-scan-row{flex-direction:column;align-items:flex-start;gap:16px}.demo-scan-row button{width:100%;justify-content:center}
+.tutorial-guide{padding:16px}.tutorial-guide h2{font-size:18px}.tutorial-progress{gap:10px}.tutorial-progress>span{font-size:10px}.tutorial-actions{align-items:stretch;flex-direction:column}
+.tutorial-actions .career-trigger{width:100%}.tutorial-actions .primary{justify-content:center}
+.welcome-simple h1{font-size:32px}.welcome-simple>p{font-size:13px}.welcome-simple .actions{flex-direction:column;align-items:stretch}
+.clarity-shell .scrim{z-index:35}
+}
+@media(prefers-reduced-motion:reduce){.clarity-shell .sidebar,.clarity-shell .workspace{transition:none!important}}
+[data-motion=reduced] .clarity-shell .sidebar,[data-motion=reduced] .clarity-shell .workspace{transition:none!important}
+@media print{.tutorial-guide,.topbar,.workspace-context{display:none!important}.clarity-shell .workspace{margin:0;width:100%}.clarity-shell main{padding:0}.clarity-shell .sidebar{display:none!important}}

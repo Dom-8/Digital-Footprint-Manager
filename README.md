@@ -119,3 +119,11 @@ Review priorities indicate possible manual-review questions. No hiring probabili
 `npm run test:server` exercises mocked OAuth, PKCE, encrypted storage, state replay/tampering, cursor restrictions, rate-limit handling, CSRF rejection and disconnect.
 `npm run test:e2e` exercises the existing demo journey and the new picker, saved decisions, priority outlines, source isolation, archive import/delete, connection failure recovery and PDF/CSV downloads.
 These automated checks do not verify live Mastodon authorisation or platform permissions. Follow the real-account checklist in docs/CONNECTIONS.md after configuration.
+
+## Clearer navigation and tutorial
+
+The dashboard presents the priority wheel first, with a direct next-review action. Platforms and timeline charts are always visible; chart scopes use buttons, and the dashboard/header contain no selects or disclosure dropdowns. The five primary destinations are Dashboard, Content Review, Accounts & Data, Career & Industry and Reports. Timeline, readiness and monitoring remain under More tools. All previous routes, including the identity alias, remain available.
+
+The sidebar collapses to an icon rail on desktop, remembers its width preference, and becomes a keyboard-contained drawer on mobile. Its motion respects both reduced-motion preferences and the browser setting. Page headers and workspace context use separate, stronger boundaries.
+
+The old multi-step startup configuration and Product Tour are replaced by Tutorial: a short purpose-first welcome, followed by choosing a career, reviewing an actual sample post and seeing the saved decision in Reports. Tutorial progress survives refresh. It temporarily uses demo data, preserves decisions and restores the previous data source when finished or exited. Demo profile switching is in Settings. Tutorial can be replayed from the sidebar or page header.

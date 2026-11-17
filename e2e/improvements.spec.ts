@@ -3,17 +3,17 @@ const archive={type:'OrderedCollection',orderedItems:[{type:'Create',object:{typ
 test.beforeEach(async({page})=>{
 await page.route('**/api/connection?**',route=>route.fulfill({json:{configured:false,connected:false,missing:['MASTODON_CLIENT_ID']}}));
 await page.goto('/');await page.getByRole('button',{name:'Close dialog'}).click();
-await expect(page.getByRole('heading',{name:'Welcome back, Alex.'})).toBeVisible();
+await expect(page.getByRole('heading',{name:'Your history. Your next step.'})).toBeVisible();
 });
 test('latest career wins, decisions survive and priority outlines have labels',async({page})=>{
 await page.goto('/#/review');
 const first=page.locator('.post-row').filter({hasText:'Class 4B'});await expect(first).toHaveClass(/priority-high/);
 await first.getByRole('button',{name:/Class 4B/}).click();await page.getByRole('dialog').getByRole('button',{name:'Mark reviewed',exact:true}).click();await page.keyboard.press('Escape');
 await expect(first).toHaveClass(/priority-neutral/);await expect(first.getByText('Reviewed',{exact:true}).first()).toBeVisible();
-await page.getByRole('button',{name:'Choose career and industry'}).first().click();await page.getByLabel('Search careers').fill('Software Developer');await page.getByRole('dialog').getByRole('button',{name:'Software Developer',exact:true}).click();
+await page.goto('/#/industry');await page.getByRole('button',{name:'Choose career and industry'}).first().click();await page.getByLabel('Search careers').fill('Software Developer');await page.getByRole('dialog').getByRole('button',{name:'Software Developer',exact:true}).click();
 await page.getByRole('button',{name:'Choose career and industry'}).first().click();await page.getByLabel('Search careers').fill('Civil Engineer');await page.getByRole('dialog').getByRole('button',{name:'Civil Engineer',exact:true}).first().click();
 await expect(page.locator('.analysis-status')).toContainText('Analysis completed for Civil Engineer');await expect(page.locator('.analysis-status')).not.toContainText('Software Developer');
-await expect(first.getByText('Reviewed',{exact:true}).first()).toBeVisible();await expect(first.getByText('Assessment changed · decision kept')).toBeVisible();
+await page.goto('/#/review');await expect(first.getByText('Reviewed',{exact:true}).first()).toBeVisible();await expect(first.getByText('Assessment changed · decision kept')).toBeVisible();
 await page.reload();await expect(first).toHaveClass(/priority-neutral/);await expect(page.locator('.analysis-status')).toContainText('Civil Engineer');
 });
 test('official archive import, source isolation, PDF/CSV and deletion',async({page})=>{
@@ -67,7 +67,7 @@ await page.goto('/#/monitoring');await expect(page.getByRole('button',{name:'Dem
 await expect(page.getByText('Demo scan completed:',{exact:false})).toHaveCount(1);
 page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Reset demo scan',exact:true}).click();
 await page.goto('/');await expect(metric).toHaveText(String(count));await expect(page.getByRole('button',{name:'Run demo scan',exact:true})).toBeEnabled();
-await page.getByText('Explore platforms and history',{exact:false}).click();await expect(page.getByLabel('Chart content scope')).toBeVisible();
+await expect(page.getByRole('heading',{name:'Your platforms and history',exact:true})).toBeVisible();await expect(page.getByRole('group',{name:'Chart content scope'})).toBeVisible();
 await page.goto('/#/platforms');await page.getByRole('button',{name:'Imported archive',exact:true}).click();
 await page.goto('/');await expect(page.getByRole('button',{name:'Run demo scan',exact:true})).toBeDisabled();
 await expect(page.getByText('Demo scans are available when Demo data is selected.',{exact:false})).toBeVisible();
@@ -76,7 +76,7 @@ await expect(page.getByText('Demo scans are available when Demo data is selected
 test('black theme, priority colours, visible career control and saved-theme migration',async({page})=>{
 await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
 expect(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(0, 0, 0)');
-await expect(page.locator('.career-trigger-main svg').first()).toBeVisible();
+await page.goto('/#/industry');await expect(page.locator('.career-trigger-main svg').first()).toBeVisible();
 const border=await page.locator('.career-trigger').first().evaluate(el=>getComputedStyle(el).borderTopStyle);expect(border).toBe('solid');
 await page.getByRole('button',{name:'Choose career and industry'}).first().click();
 await expect(page.getByRole('dialog',{name:'Choose your career'})).toBeVisible();await page.keyboard.press('Escape');

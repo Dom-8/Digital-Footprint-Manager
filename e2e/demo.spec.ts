@@ -6,10 +6,7 @@ test('teacher journey, saved decisions, complete routes and responsive layouts',
   await page.goto('/');
   const dialog=page.getByRole('dialog');
   await expect(dialog).toBeVisible();
-  for(let i=0;i<3;i++)await dialog.getByRole('button',{name:'Continue',exact:true}).click();
-  await dialog.getByRole('checkbox').check();
-  await dialog.getByRole('button',{name:'Continue',exact:true}).click();
-  await dialog.getByRole('button',{name:'Open my dashboard'}).click();
+  await dialog.getByRole('button',{name:'Explore on my own',exact:true}).click();
   await expect(dialog).not.toBeVisible();
   const metric=page.getByText('Items needing review',{exact:true}).locator('../..').locator('.metric-value');
   const before=Number(await metric.textContent());
@@ -41,7 +38,7 @@ test('teacher journey, saved decisions, complete routes and responsive layouts',
   await page.goto('/');
   for(const width of [375,768,1440]){
     await page.setViewportSize({width,height:1000});
-    await expect(page.getByRole('heading',{name:'Welcome back, Alex.'})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Your history. Your next step.'})).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
     if(width===375){
       await page.getByRole('button',{name:'Open navigation',exact:true}).click();
