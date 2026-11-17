@@ -35,9 +35,9 @@ const wheel=await page.locator('.priority-overview').boundingBox(),history=await
 const headerBorder=await page.getByRole('banner',{name:'Page header'}).evaluate(el=>getComputedStyle(el).borderBottomWidth);expect(headerBorder).toBe('2px');
 await page.getByRole('button',{name:'Collapse sidebar'}).click();
 await expect(page.locator('.clarity-shell')).toHaveClass(/sidebar-collapsed/);
-await expect.poll(async()=>(await page.locator('#app-sidebar').boundingBox())!.width).toBeLessThan(80);
+await expect(page.locator('#app-sidebar')).toBeHidden();await expect.poll(async()=>(await page.locator('.workspace').boundingBox())!.x).toBe(0);await page.getByRole('button',{name:'Expand sidebar'}).click();
 await page.getByRole('link',{name:'Content Review',exact:true}).click();await expect(page.getByRole('heading',{name:'Content Review',exact:true})).toBeVisible();
-await page.reload();await expect(page.getByRole('button',{name:'Expand sidebar'})).toBeVisible();
+await page.getByRole('button',{name:'Collapse sidebar'}).click();await page.reload();await expect(page.getByRole('button',{name:'Expand sidebar'})).toBeVisible();
 await page.getByRole('button',{name:'Expand sidebar'}).click();await expect.poll(async()=>(await page.locator('#app-sidebar').boundingBox())!.width).toBeGreaterThan(200);
 await page.getByRole('link',{name:'Dashboard',exact:true}).click();
 await page.getByRole('button',{name:/^High priority: \d+ posts$/}).click();await expect(page.getByLabel('Priority',{exact:true})).toHaveValue('High priority');
@@ -55,4 +55,14 @@ await expect(page.locator('.context-source')).toHaveText('Demo data');
 await page.getByRole('button',{name:'Exit tutorial'}).click();
 await expect(page.locator('.context-source')).toHaveText('Imported posts');
 await expect(page.locator('main select, main details')).toHaveCount(0);
+});
+
+test('review actions clear posts immediately and undo restores them',async({page})=>{
+await page.goto('/');await page.getByRole('button',{name:'Explore on my own'}).click();await page.goto('/#/review');
+const row=page.locator('.post-row').filter({hasText:'Class 4B'});
+await row.getByRole('button',{name:/Class 4B/}).click();await page.getByRole('dialog').getByRole('button',{name:'Dismiss',exact:true}).click();
+await expect(page.getByRole('dialog')).toHaveCount(0);await expect(row).toHaveCount(0);
+await page.locator('.toast').getByRole('button',{name:'Undo',exact:true}).click();await expect(row).toBeVisible();
+await row.getByRole('button',{name:/Class 4B/}).click();await page.getByRole('dialog').getByRole('button',{name:'Follow up',exact:true}).click();await expect(row).toHaveCount(0);
+await page.getByRole('button',{name:'Show processed posts'}).click();await expect(row).toContainText('Marked for follow-up');
 });

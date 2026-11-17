@@ -9,7 +9,7 @@ test('latest career wins, decisions survive and priority outlines have labels',a
 await page.goto('/#/review');
 const first=page.locator('.post-row').filter({hasText:'Class 4B'});await expect(first).toHaveClass(/priority-high/);
 await first.getByRole('button',{name:/Class 4B/}).click();await page.getByRole('dialog').getByRole('button',{name:'Mark reviewed',exact:true}).click();await page.keyboard.press('Escape');
-await expect(first).toHaveClass(/priority-neutral/);await expect(first.getByText('Reviewed',{exact:true}).first()).toBeVisible();
+await expect(first).toHaveCount(0);await expect(page.getByRole('dialog')).toHaveCount(0);await page.getByRole('button',{name:'Show processed posts'}).click();await expect(first).toHaveClass(/priority-neutral/);await expect(first.getByText('Reviewed',{exact:true}).first()).toBeVisible();
 await page.goto('/#/industry');await page.getByRole('button',{name:'Choose career and industry'}).first().click();await page.getByLabel('Search careers').fill('Software Developer');await page.getByRole('dialog').getByRole('button',{name:'Software Developer',exact:true}).click();
 await page.getByRole('button',{name:'Choose career and industry'}).first().click();await page.getByLabel('Search careers').fill('Civil Engineer');await page.getByRole('dialog').getByRole('button',{name:'Civil Engineer',exact:true}).first().click();
 await expect(page.locator('.analysis-status')).toContainText('Analysis completed for Civil Engineer');await expect(page.locator('.analysis-status')).not.toContainText('Software Developer');
