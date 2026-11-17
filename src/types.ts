@@ -8,4 +8,4 @@ export interface Industry {id:string;name:string;occupations:string[];focus:stri
 export interface Decision {status?:Status;note?:string;priority?:Priority;hidden?:'archived'|'deleted';}
 export interface Event {id:string;date:string;text:string;read:boolean;}
 export interface ProfileState {source?:DataSource;importedPosts?:Post[];roleDescription?:string;industry:string;occupation:string;platforms:string[];decisions:Record<string,Decision>;checklist:string[];scan:number;events:Event[];lastScan:string|null;frequency:string;cvStart:string;linkedStart:string;name:string;}
-export interface State {version:1;persona:string;profiles:Record<string,ProfileState>;onboarded:boolean;theme:'light'|'dark';compact:boolean;reduced:boolean;notifications:boolean;reminders:boolean;}
+export interface State {version:1;appearanceVersion?:2;persona:string;profiles:Record<string,ProfileState>;onboarded:boolean;theme:'light'|'dark';compact:boolean;reduced:boolean;notifications:boolean;reminders:boolean;}

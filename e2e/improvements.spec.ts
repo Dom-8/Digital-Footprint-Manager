@@ -72,3 +72,19 @@ await page.goto('/#/platforms');await page.getByRole('button',{name:'Imported ar
 await page.goto('/');await expect(page.getByRole('button',{name:'Run demo scan',exact:true})).toBeDisabled();
 await expect(page.getByText('Demo scans are available when Demo data is selected.',{exact:false})).toBeVisible();
 });
+
+test('black monochrome theme, visible career control and saved-theme migration',async({page})=>{
+await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+expect(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(0, 0, 0)');
+await expect(page.locator('.career-trigger-main svg').first()).toBeVisible();
+const border=await page.locator('.career-trigger').first().evaluate(el=>getComputedStyle(el).borderTopStyle);expect(border).toBe('solid');
+await page.getByRole('button',{name:'Choose career and industry'}).first().click();
+await expect(page.getByRole('dialog',{name:'Choose your career'})).toBeVisible();await page.keyboard.press('Escape');
+await page.goto('/#/settings');await page.getByLabel('Theme',{exact:true}).selectOption('light');
+await page.reload();await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+await page.evaluate(()=>{const key='dfm-demo-v1';const s=JSON.parse(localStorage.getItem(key)!);delete s.appearanceVersion;s.theme='light';s.profiles.alex.decisions['alex-0']={status:'Reviewed'};localStorage.setItem(key,JSON.stringify(s));});
+await page.reload();await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+await page.goto('/#/review');await expect(page.locator('.post-row').filter({hasText:'Class 4B'})).toHaveClass(/priority-neutral/);
+const tones=await page.locator('.post-row .priority-badge').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).color));expect(tones.every(c=>{const channels=c.match(/\d+/g)?.map(Number);return channels&&channels[0]===channels[1]&&channels[1]===channels[2];})).toBe(true);
+await page.screenshot({path:'screenshots/monochrome-review.png',fullPage:true});
+});
