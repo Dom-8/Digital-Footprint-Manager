@@ -106,3 +106,8 @@ progress{accent-color:var(--text)}progress::-webkit-progress-value{background:va
 @media(max-width:1023px){.dashboard-context{align-items:flex-start;flex-direction:column}.dashboard-actions{flex-wrap:wrap;justify-content:flex-end}}
 @media(max-width:767px){main{padding:24px 18px 36px}.topbar{padding:10px 18px}.career-bar,.analysis-status{padding:8px 18px}.page-title{flex-wrap:wrap;gap:14px}.page-title h1{font-size:25px}.dashboard-actions{width:100%;justify-content:flex-start}.dashboard-actions>*{flex:1}.dashboard-context{padding:14px}.dashboard-context>div{gap:7px 10px}.metrics{gap:10px}.metrics .card{padding:15px}.metric-value{font-size:27px}.dashboard-grid{grid-template-columns:1fr;gap:0}.card{padding:20px}.dashboard-explore>summary span{float:none;display:block;margin:6px 0 0 17px}.dashboard-minimal .recent-post{flex-wrap:wrap}.dashboard-minimal .recent-post>span:nth-child(2){min-width:130px}.dashboard-minimal .recent-post>.badge{margin-left:44px;max-width:none}.review-advice{gap:12px}}
 @media print{.dashboard-actions,.dashboard-context,.scan-help,.dashboard-explore{display:none!important}.card{box-shadow:none}.report-brand{color:black}}
+
+/* Keep hover and completed actions neutral too. */
+.primary:hover{background:var(--text)!important;color:var(--surface)!important}
+.primary:disabled,.primary:disabled:hover{background:var(--secondary)!important;color:var(--muted)!important;border-color:var(--border)!important;opacity:1}
+a{color:var(--text)}
