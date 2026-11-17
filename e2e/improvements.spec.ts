@@ -73,7 +73,7 @@ await page.goto('/');await expect(page.getByRole('button',{name:'Run demo scan',
 await expect(page.getByText('Demo scans are available when Demo data is selected.',{exact:false})).toBeVisible();
 });
 
-test('black monochrome theme, visible career control and saved-theme migration',async({page})=>{
+test('black theme, priority colours, visible career control and saved-theme migration',async({page})=>{
 await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
 expect(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(0, 0, 0)');
 await expect(page.locator('.career-trigger-main svg').first()).toBeVisible();
@@ -85,6 +85,12 @@ await page.reload();await expect(page.locator('html')).toHaveAttribute('data-the
 await page.evaluate(()=>{const key='dfm-demo-v1';const s=JSON.parse(localStorage.getItem(key)!);delete s.appearanceVersion;s.theme='light';s.profiles.alex.decisions['alex-0']={status:'Reviewed'};localStorage.setItem(key,JSON.stringify(s));});
 await page.reload();await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
 await page.goto('/#/review');await expect(page.locator('.post-row').filter({hasText:'Class 4B'})).toHaveClass(/priority-neutral/);
-const tones=await page.locator('.post-row .priority-badge').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).color));expect(tones.every(c=>{const channels=c.match(/\d+/g)?.map(Number);return channels&&channels[0]===channels[1]&&channels[1]===channels[2];})).toBe(true);
-await page.screenshot({path:'screenshots/monochrome-review.png',fullPage:true});
+const reviewed=page.locator('.post-row').filter({hasText:'Class 4B'});
+const grey=await reviewed.locator('.badge').first().evaluate(el=>getComputedStyle(el).color);
+const channels=grey.match(/\d+/g)!.map(Number);expect(channels[0]).toBe(channels[1]);expect(channels[1]).toBe(channels[2]);
+await page.goto('/');
+for(const [tone,expected] of [['red','rgb(252, 165, 165)'],['amber','rgb(252, 211, 77)'],['blue','rgb(147, 197, 253)']]){
+expect(await page.locator('.priority-list .priority-badge.'+tone).first().evaluate(el=>getComputedStyle(el).color)).toBe(expected);
+}
+await page.screenshot({path:'screenshots/black-dashboard-priority-colours.png',fullPage:true});
 });

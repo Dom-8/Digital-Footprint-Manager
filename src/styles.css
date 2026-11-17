@@ -169,3 +169,26 @@ footer{color:var(--muted);border-color:var(--border)}
 :root[data-theme] body,:root[data-theme] .card{background:white!important;color:black!important}
 .report th{background:#eee!important;color:#111!important}.report td,.report p{color:#111!important}
 }
+
+/* Priority colours remain semantic within the black minimalist workspace. */
+:root[data-theme=dark] .priority-high{--priority:#d96262}
+:root[data-theme=dark] .priority-medium{--priority:#d59a3c}
+:root[data-theme=dark] .priority-low{--priority:#639ce8}
+:root[data-theme=dark] .priority-neutral{--priority:#666}
+:root[data-theme=light] .priority-high{--priority:#b93838}
+:root[data-theme=light] .priority-medium{--priority:#a76505}
+:root[data-theme=light] .priority-low{--priority:#2763b6}
+:root[data-theme=light] .priority-neutral{--priority:#858b96}
+.priority-card{border-left-width:3px!important}
+.priority-card:hover,.priority-card:focus-within,.priority-card.selected{border-color:var(--priority)!important}
+:root[data-theme=dark] .priority-badge.red{color:#fca5a5;background:#281313;border-color:#743636}
+:root[data-theme=dark] .priority-badge.amber{color:#fcd34d;background:#251c0d;border-color:#75551e}
+:root[data-theme=dark] .priority-badge.blue{color:#93c5fd;background:#111e30;border-color:#335c8d}
+:root[data-theme=light] .priority-badge.red{color:#9c2727;background:#ffe5e5;border-color:#e6aaaa}
+:root[data-theme=light] .priority-badge.amber{color:#855000;background:#fff0d4;border-color:#dcc394}
+:root[data-theme=light] .priority-badge.blue{color:#214f92;background:#e5efff;border-color:#a7c2e7}
+@media print{
+:root[data-theme] .priority-badge.red{color:#9c2727;background:#fff;border-color:#b93838}
+:root[data-theme] .priority-badge.amber{color:#855000;background:#fff;border-color:#a76505}
+:root[data-theme] .priority-badge.blue{color:#214f92;background:#fff;border-color:#2763b6}
+}
