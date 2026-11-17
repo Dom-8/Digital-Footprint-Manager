@@ -383,3 +383,5 @@ footer{color:var(--muted);border-color:var(--border)}
 @keyframes letter-settle{from{letter-spacing:8px;opacity:0;transform:translateY(8px)}to{letter-spacing:0;opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.route-transition,.review-feedback,.feedback-letters{animation:none}.clarity-shell .sidebar{transition:none!important}}
 [data-motion=reduced] .route-transition,[data-motion=reduced] .review-feedback,[data-motion=reduced] .feedback-letters{animation:none}
+
+.account-setup form{max-width:480px}.account-setup form .field{margin-bottom:18px}.account-setup .dashboard-grid{margin-top:20px}.account-setup .connection-panel{margin-top:20px}

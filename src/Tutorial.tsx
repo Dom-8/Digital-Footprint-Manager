@@ -1,15 +1,16 @@
-import {useEffect} from 'react';
+import {useEffect,useState} from 'react';
 import {Link,useLocation,useNavigate} from 'react-router-dom';
 import {ArrowRight,Check,BookOpen,X} from 'lucide-react';
 import {useStore} from './store';
 import {scoped,analyse,resolved} from './engine';
+import Connections from './Connections';
 import {IndustryControl} from './components';
 export function useTutorial(){
 const {state,settings,toast}=useStore();const navigate=useNavigate();
-function start(){
+function startDemo(){
 if(state.tutorialStep!==undefined){navigate(state.tutorialStep===1?'/review?open='+encodeURIComponent(state.tutorialPostId||''):state.tutorialStep===2?'/reports':'/');return;}
 const raw=state.profiles[state.persona];
-settings({onboarded:true,tutorialStep:0,tutorialPostId:undefined,tutorialPreviousSource:raw.source||'demo',tutorialPersona:state.persona,profiles:{...state.profiles,[state.persona]:{...raw,source:'demo'}}});
+settings({setupStep:undefined,onboarded:true,tutorialStep:0,tutorialPostId:undefined,tutorialPreviousSource:raw.source||'demo',tutorialPersona:state.persona,profiles:{...state.profiles,[state.persona]:{...raw,source:'demo'}}});
 navigate('/');
 }
 function exit(finished=false){
@@ -18,7 +19,8 @@ settings({profiles,onboarded:true,tutorialStep:undefined,tutorialPostId:undefine
 toast(finished?'Tutorial complete. You’re ready to review your own posts.':'Tutorial paused. Your review decisions are saved.');
 navigate('/');
 }
-return {start,exit};
+function start(){settings({onboarded:true,setupStep:state.setupStep??0,tutorialStep:undefined});navigate('/');}
+return {start,startDemo,exit};
 }
 export default function Tutorial(){
 const {state,p,posts,settings,analysisPending}=useStore();const navigate=useNavigate();const location=useLocation();const {exit}=useTutorial();
@@ -27,8 +29,22 @@ const all=scoped(posts,state.persona,p);
 const examples=all.filter(x=>(x.source||'demo')==='demo'&&analyse(x,p.industry,{},p.occupation).priority!=='No concern identified');
 const example=examples.find(x=>!resolved(p.decisions[x.id]?.status))||examples[0];
 useEffect(()=>{if(step===2&&location.pathname!=='/reports')navigate('/reports');},[step]);
+if(state.setupStep!==undefined)return <AccountSetup/>;
 if(step===undefined)return null;
 return <section className="tutorial-guide" aria-label="Tutorial"><div className="tutorial-guide-top"><span><BookOpen size={16}/> Tutorial · Step {step+1} of 3</span><button className="icon" aria-label="Exit tutorial" onClick={()=>exit()}><X size={17}/></button></div><div className="tutorial-progress" aria-label={'Tutorial step '+(step+1)+' of 3'}>{['Choose a career','Review a post','See your report'].map((s,i)=><span key={s} className={i===step?'current':i<step?'complete':''}>{i<step?<Check size={13}/>:i+1}<span>{s}</span></span>)}</div>
 {step===0?<><h2>First, choose the career you want to prepare for.</h2><p>This changes which details may be relevant. You can keep the current career or choose another.</p><div className="tutorial-actions"><IndustryControl/><button className="primary" disabled={analysisPending||!example} onClick={()=>{if(!example)return;settings({tutorialStep:1,tutorialPostId:example.id});navigate('/review?open='+encodeURIComponent(example.id));}}>Use this career <ArrowRight size={16}/></button></div>{!analysisPending&&!example&&<p>Enable a demo platform to open an example. <Link to="/platforms">Choose demo platforms →</Link></p>}</>:step===1?<><h2>Now review one post and make a decision.</h2><p>Read why it was flagged and what context may be missing. Add a note if useful, then choose <strong>Mark reviewed</strong> or <strong>Dismiss</strong>. This only changes your review record.</p><Link className="button" to={'/review?open='+encodeURIComponent(state.tutorialPostId||'')}>Open the example post <ArrowRight size={15}/></Link></>:<><h2>Your decision is now reflected in your report.</h2><p>Your report shows the selected career, included posts and your review decisions. Use Download PDF or Export CSV below when you want a copy.</p><button className="primary" onClick={()=>exit(true)}>Finish tutorial <Check size={16}/></button></>}
 <p className="tutorial-sample-note">Tutorial uses sample posts. Your own imported or connected posts are kept separate.</p></section>;
+}
+
+function AccountSetup(){
+const {state,p,settings,update,posts,connection,analysisPending}=useStore();const nav=useNavigate();
+const [name,setName]=useState(state.setupName||''),[email,setEmail]=useState(state.setupEmail||'');
+const {startDemo}=useTutorial();const step=state.setupStep??0;const items=scoped(posts,state.persona,p).filter(x=>x.source==='connected'||x.source==='imported');
+const ready=p.source==='connected'?connection.connected:p.source==='imported'&&!!p.importedPosts?.length;
+const target=items.find(x=>!resolved(p.decisions[x.id]?.status))||items[0];
+const go=(next:0|1|2|3|4)=>{settings({setupStep:next});nav(next===4?'/reports':'/');};
+return <section className="tutorial-guide account-setup" aria-label="Account setup"><div className="tutorial-guide-top"><span><BookOpen size={16}/> Set up your workspace · {step+1} of 5</span><button onClick={()=>settings({setupStep:undefined})}>Save & exit</button></div>
+<div className="tutorial-progress">{['Your details','Your career','Your account','First review','Your report'].map((label,i)=><span key={label} className={step===i?'current':''}>{i<step?<Check size={13}/>:i+1} {label}</span>)}</div>
+{step===0?<><h2>Let’s make this your workspace.</h2><p>Add your name and email to personalise your profile. These details stay in this browser; email is not verified and no sign-in account is created yet.</p><form onSubmit={e=>{e.preventDefault();settings({setupName:name.trim(),setupEmail:email.trim(),setupStep:1});update({name:name.trim()});}}><label className="field"><span>Your name</span><input required autoComplete="name" maxLength={60} value={name} onChange={e=>setName(e.target.value)} placeholder="Your name"/></label><label className="field"><span>Email address</span><input required type="email" autoComplete="email" maxLength={254} value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com"/></label><button className="primary" type="submit">Save details & continue <ArrowRight size={16}/></button></form><button className="quiet-action" onClick={startDemo}>Try sample tutorial</button></>:step===1?<><h2>What career are you preparing for, {state.setupName?.split(' ')[0]}?</h2><IndustryControl/><div className="tutorial-actions"><button onClick={()=>go(0)}>Back</button><button className="primary" disabled={analysisPending} onClick={()=>go(2)}>Continue to accounts <ArrowRight size={16}/></button></div></>:step===2?<><h2>Bring your own posts into the picture.</h2><p>Connect through Mastodon’s official authorisation page, then load your posts. You can also import your Mastodon archive.</p><Connections onboarding/><div className="tutorial-actions"><button onClick={()=>go(1)}>Back</button><button className="primary" disabled={!ready||analysisPending||(p.source==='connected'&&!items.length)} onClick={()=>{settings({setupStep:3,tutorialPostId:target?.id});nav('/review'+(target?'?open='+encodeURIComponent(target.id):''));}}>Continue with my posts <ArrowRight size={16}/></button></div>{!items.length&&connection.connected&&<p>Load your posts above to continue. If the account has no posts, save and exit; you can return after posting.</p>}</>:step===3?<><h2>Review your first post.</h2><p>Open a post, read the explanation and choose Mark reviewed or Dismiss. You can add context first.</p>{target?<Link className="primary" to={'/review?open='+encodeURIComponent(target.id)}>Open my post <ArrowRight size={16}/></Link>:<button onClick={()=>go(2)}>Return to accounts</button>}</>:<><h2>Your first review is saved.</h2><p>Open your report to see your career, data coverage and review decisions.</p><div className="actions"><Link className="button" to="/reports">Open my report</Link><button className="primary" onClick={()=>{settings({setupStep:undefined,tutorialDone:true,tutorialPostId:undefined});nav('/');}}>Finish setup <Check size={16}/></button></div></>}
+</section>;
 }

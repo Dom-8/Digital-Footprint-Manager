@@ -4,7 +4,7 @@ test('tutorial replaces setup and teaches an actual saved review',async({page})=
 await page.goto('/');const welcome=page.getByRole('dialog',{name:'Welcome to Digital Footprint Manager'});
 await expect(welcome.getByRole('heading',{name:'Understand old posts. Decide your next step.'})).toBeVisible();
 await expect(welcome.locator('select')).toHaveCount(0);
-await welcome.getByRole('button',{name:'Start tutorial',exact:true}).click();
+await welcome.getByRole('button',{name:'Try sample tutorial',exact:true}).click();
 await expect(page.getByRole('region',{name:'Tutorial'})).toBeVisible();
 await expect(page.getByRole('heading',{name:'First, choose the career you want to prepare for.'})).toBeVisible();
 await page.getByRole('region',{name:'Tutorial'}).getByRole('button',{name:'Use this career'}).click();
@@ -20,7 +20,7 @@ await page.getByRole('button',{name:'Finish tutorial',exact:true}).click();
 await expect(page.getByRole('region',{name:'Tutorial'})).toHaveCount(0);
 await page.goto('/#/review');const row=page.locator('.post-row').filter({hasText:'Class 4B'});await expect(row).toHaveClass(/priority-neutral/);
 await page.reload();await expect(row).toHaveClass(/priority-neutral/);
-await page.getByRole('button',{name:'Start tutorial',exact:true}).click();
+await page.getByRole('button',{name:'Start tutorial',exact:true}).click();await page.getByRole('button',{name:'Try sample tutorial',exact:true}).click();
 await expect(page.getByRole('region',{name:'Tutorial'})).toBeVisible();
 await page.getByRole('button',{name:'Exit tutorial'}).click();
 await expect(page.getByRole('region',{name:'Tutorial'})).toHaveCount(0);
@@ -50,7 +50,7 @@ await page.screenshot({path:'screenshots/clear-dashboard-mobile.png',fullPage:tr
 test('tutorial temporarily uses sample posts and restores the selected source on exit',async({page})=>{
 await page.goto('/');await page.getByRole('button',{name:'Explore on my own'}).click();
 await page.goto('/#/platforms');await page.getByRole('button',{name:'Imported archive',exact:true}).click();
-await page.getByRole('button',{name:'Start tutorial',exact:true}).click();
+await page.getByRole('button',{name:'Start tutorial',exact:true}).click();await page.getByRole('button',{name:'Try sample tutorial',exact:true}).click();
 await expect(page.locator('.context-source')).toHaveText('Demo data');
 await page.getByRole('button',{name:'Exit tutorial'}).click();
 await expect(page.locator('.context-source')).toHaveText('Imported posts');
@@ -65,4 +65,15 @@ await expect(page.getByRole('dialog')).toHaveCount(0);await expect(row).toHaveCo
 await page.locator('.toast').getByRole('button',{name:'Undo',exact:true}).click();await expect(row).toBeVisible();
 await row.getByRole('button',{name:/Class 4B/}).click();await page.getByRole('dialog').getByRole('button',{name:'Follow up',exact:true}).click();await expect(row).toHaveCount(0);
 await page.getByRole('button',{name:'Show processed posts'}).click();await expect(row).toContainText('Marked for follow-up');
+});
+
+test('personal setup validates details, resumes and requires real data',async({page})=>{
+await page.goto('/');await page.getByRole('button',{name:'Start tutorial',exact:true}).last().click();
+const setup=page.getByRole('region',{name:'Account setup'});
+await setup.getByRole('button',{name:'Save details & continue'}).click();await expect(setup.getByLabel('Your name',{exact:true})).toBeVisible();
+await setup.getByLabel('Your name',{exact:true}).fill('Robin Test');await setup.getByLabel('Email address',{exact:true}).fill('robin@example.com');await setup.getByRole('button',{name:'Save details & continue'}).click();
+await expect(setup.getByRole('heading',{name:/What career/})).toContainText('Robin');await page.reload();await expect(setup.getByRole('heading',{name:/What career/})).toBeVisible();
+await setup.getByRole('button',{name:'Continue to accounts'}).click();await expect(setup.getByText("Account connections aren't ready on this site yet.",{exact:true})).toBeVisible();
+await expect(setup.getByRole('button',{name:'Continue with my posts'})).toBeDisabled();await expect(setup.getByRole('button',{name:'Demo data',exact:true})).toHaveCount(0);
+await setup.getByRole('button',{name:'Save & exit'}).click();await page.getByRole('button',{name:'Tutorial',exact:true}).click();await expect(setup.getByRole('heading',{name:'Bring your own posts into the picture.'})).toBeVisible();
 });

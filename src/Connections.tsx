@@ -2,14 +2,14 @@ import {useRef,useState} from 'react';
 import {Link,useSearchParams} from 'react-router-dom';
 import {useStore} from './store';
 import {Card,Badge} from './components';
-export default function Connections(){
+export default function Connections({onboarding=false}:{onboarding?:boolean}){
 const {p,update,connection,connectionBusy,connectionError,connectionChecking,refreshConnection,loadConnection,disconnect,importData}=useStore();
 const [params]=useSearchParams();const [error,setError]=useState('');const [consent,setConsent]=useState(false);const importInput=useRef<HTMLInputElement>(null);
 function chooseImport(){importInput.current?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});importInput.current?.focus();}
 return <>
 {params.get('connection')==='cancelled'&&<p role="status">You cancelled the connection. You can try again whenever you're ready.</p>}
 {params.get('connection')==='success'&&<p role="status">You're back from Mastodon. Check your account below, then load your posts.</p>}
-<Card className="connection-panel"><span className="eyebrow">YOUR POSTS, IN ONE PLACE</span><h2>What would you like to review?</h2><div className="source-tabs" role="group" aria-label="Data source">{(['demo','imported','connected'] as const).map(source=><button key={source} aria-pressed={(p.source||'demo')===source} onClick={()=>update({source})}>{source==='demo'?'Demo data':source==='imported'?'Imported archive':'Connected account'}</button>)}</div><p>Choose sample posts, an archive you've uploaded, or posts from a connected account.</p></Card>
+<Card className="connection-panel"><span className="eyebrow">YOUR POSTS, IN ONE PLACE</span><h2>What would you like to review?</h2><div className="source-tabs" role="group" aria-label="Data source">{(onboarding?(['imported','connected'] as const):(['demo','imported','connected'] as const)).map(source=><button key={source} aria-pressed={(p.source||'demo')===source} onClick={()=>update({source})}>{source==='demo'?'Demo data':source==='imported'?'Imported archive':'Connected account'}</button>)}</div><p>{onboarding?'Choose your connected account or imported archive.':'Choose sample posts, an archive you have uploaded, or posts from a connected account.'}</p></Card>
 <div className="dashboard-grid"><Card><div className="section-head"><h2>Connect Mastodon</h2><Badge value={connectionChecking?'Checking connection':connection.connected?'Connected':connection.configured?'Ready to connect':'Setup required'}/></div>
 {connection.account&&<p className="connection-account">@{connection.account}</p>}
 {connectionChecking?<p role="status">Checking whether account connections are ready…</p>:!connection.configured?<div className="connection-unavailable"><h3>Account connections aren't ready on this site yet.</h3><p>You can still review your posts by importing a Mastodon archive.</p><div className="actions"><button className="primary" onClick={chooseImport}>Import an archive instead</button><button onClick={()=>void refreshConnection()}>Check again</button></div>
