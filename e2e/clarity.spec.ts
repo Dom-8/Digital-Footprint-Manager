@@ -85,3 +85,10 @@ const dialog=page.getByRole('dialog',{name:'Connect your Mastodon account'});awa
 await dialog.getByRole('button',{name:'Close connection setup'}).click();await expect(dialog).toHaveCount(0);
 const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'Imported archive',exact:true}).click();const picker=await chooser;expect(picker.isMultiple()).toBe(false);
 });
+
+test('skip accounts continues through sample review and report',async({page})=>{
+await page.goto('/');await page.getByRole('button',{name:'Start tutorial',exact:true}).last().click();
+const setup=page.getByRole('region',{name:'Account setup'});await setup.getByLabel('Your name',{exact:true}).fill('Robin');await setup.getByLabel('Email address',{exact:true}).fill('robin@example.com');await setup.getByRole('button',{name:'Save details & continue'}).click();await setup.getByRole('button',{name:'Continue to accounts'}).click();
+await setup.getByRole('button',{name:'Skip for now — add posts later'}).click();await expect(setup.getByText('Practice · Sample posts',{exact:true})).toBeVisible();await page.reload();await expect(setup.getByText('Practice · Sample posts',{exact:true})).toBeVisible();
+await setup.getByRole('link',{name:'Open sample post'}).click();await page.getByRole('dialog').getByRole('button',{name:'Mark reviewed',exact:true}).click();await expect(setup.getByRole('heading',{name:'Your practice report.'})).toBeVisible();await setup.getByRole('button',{name:'Finish setup'}).click();await expect(setup).toHaveCount(0);await page.getByRole('link',{name:'Accounts & Data',exact:true}).click();await expect(page.getByRole('button',{name:'Connected account',exact:true})).toBeVisible();
+});
