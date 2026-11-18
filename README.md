@@ -137,3 +137,5 @@ Open **Career assistant** in the sidebar for the current role's checklist and op
 ## Guided chat (default)
 
 Career assistant is now a local guided chat: visitors can type messages or use four prompts. Replies match supported topics to the selected career checklist and prepared templates. Follow-ups such as “make it shorter”, review actions, account imports and report help are supported. Unsupported requests explain the scope. No API key, assistant network request or post upload is required. AI backend code remains dormant for future development; it is not used by this interface.
+
+Career assistant appears inline in the lower dashboard, with a conversational thread and composer. The sidebar shortcut scrolls to it; no assistant popup is used. Enter sends a message; Shift+Enter adds a line.

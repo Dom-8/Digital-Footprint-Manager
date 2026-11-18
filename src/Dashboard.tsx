@@ -1,5 +1,5 @@
 import {useState,useEffect,useRef} from 'react';
-import {Link,useNavigate} from 'react-router-dom';
+import {Link,useNavigate,useSearchParams} from 'react-router-dom';
 import {ArrowRight,ArrowUpRight,CheckCheck,Layers,ScanEye,RefreshCw,Briefcase,Link2,BookOpen} from 'lucide-react';
 import {ResponsiveContainer,PieChart,Pie,Cell,Tooltip,BarChart,Bar,XAxis,YAxis} from 'recharts';
 import {industries,priorities} from './data';
@@ -9,10 +9,13 @@ import {Card,Badge,Empty} from './components';
 import {Detail} from './Review';
 import {useTutorial} from './Tutorial';
 import CareerGuide from './CareerGuide';
+import CareerAssistant from './CareerAssistant';
 import type {Post} from './types';
 const priorityColours:Record<string,string>={'High priority':'#d96262','Medium priority':'#d59a3c','Low priority':'#639ce8','Context needed':'#9c732f','Reviewed':'#737373'};
 export default function Dashboard(){
 const {posts,state,p,connection,runDemoScan}=useStore();const nav=useNavigate();const {start}=useTutorial();
+const [query]=useSearchParams();
+useEffect(()=>{if(query.get('assistant')==='open')document.getElementById('career-assistant')?.scrollIntoView({block:'start'});},[query]);
 const [mode,setMode]=useState('All content'),[opened,setOpened]=useState<Post|null>(null);
 const items=scoped(posts,state.persona,p),m=metrics(items,p);
 const assessment=(x:Post)=>analyse(x,p.industry,p.decisions[x.id],p.occupation);
@@ -42,6 +45,7 @@ return <div className="dashboard-clear">
 <section className="visible-insights" aria-labelledby="platform-history-title"><div className="section-head"><div><h2 id="platform-history-title">Your platforms and history</h2><p>See what is included in this review.</p></div><Link to="/timeline">Open timeline <ArrowUpRight size={14}/></Link></div><div className="dashboard-grid"><Card><div className="section-head"><h3>Posts by platform</h3><Link to="/platforms">Manage data</Link></div><div className="scope-tabs" role="group" aria-label="Chart content scope">{['All content','Items requiring review','Reviewed items','Dismissed items'].map(v=><button key={v} aria-pressed={mode===v} onClick={()=>setMode(v)}>{v==='Items requiring review'?'Needs review':v==='Reviewed items'?'Reviewed':v==='Dismissed items'?'Dismissed':'All posts'}</button>)}</div><div className="platform-bars">{platforms.map(x=><button key={x.name} onClick={()=>nav(chartLink(x.name))}><span>{x.name}</span><strong>{x.value}</strong><span className="track"><span style={{width:(chartItems.length?x.value/chartItems.length*100:0)+'%'}}/></span></button>)}</div>{!chartItems.length&&<p className="muted">No posts in this view. Try another scope.</p>}</Card>
 <Card><h3>Posts over time</h3>{items.length?<ResponsiveContainer width="100%" height={220}><BarChart data={[...new Set(items.map(x=>x.date.slice(0,4)))].sort().map(year=>({year,posts:items.filter(x=>x.date.startsWith(year)).length}))}><XAxis dataKey="year" tick={{fontSize:11,fill:'var(--muted)'}}/><YAxis allowDecimals={false} width={24} tick={{fill:'var(--muted)'}}/><Tooltip contentStyle={{background:'var(--surface)',border:'1px solid var(--border)',color:'var(--text)'}}/><Bar dataKey="posts" fill="#a3a3a3" radius={[3,3,0,0]} onClick={(d:any)=>nav('/timeline?from='+d.year+'-01-01&to='+d.year+'-12-31')}/></BarChart></ResponsiveContainer>:<p className="muted">Add posts to see your timeline here.</p>}</Card></div></section>
 <Card className="demo-scan-row"><div><h3>{demo?'Try a fresh demo scan':'Want to test the demo scan?'}</h3><p id="dashboard-scan-help">{demo?(p.scan===1?'Scan complete. Reset in Monitoring to try again.':'Add three sample posts.'):'Demo scans are available when Demo data is selected. Manage real posts in Connected Platforms.'}</p></div><button className="button" disabled={!demo||p.scan===1} onClick={runDemoScan} aria-describedby="dashboard-scan-help"><RefreshCw size={16}/>{p.scan===1?'Demo scan completed':'Run demo scan'}</button></Card>
+<section id="career-assistant" className="dashboard-chat" aria-label="Career assistant"><h2>Career assistant</h2><CareerAssistant/></section>
 {p.events.length>0&&<section className="recent-activity"><h2>Recent activity</h2>{p.events.slice(0,3).map(e=><div className="activity" key={e.id}><span className="activity-dot"/><div>{e.text}<small>{new Date(e.date).toLocaleString('en-AU')}</small></div></div>)}</section>}
 {opened&&<Detail post={opened} onClose={()=>setOpened(null)}/>}
 </div>;}

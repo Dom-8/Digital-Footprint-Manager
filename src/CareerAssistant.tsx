@@ -4,13 +4,13 @@ import {useStore} from './store';
 import {careerGuide} from './careerGuidance';
 import {scoped,analyse,resolved} from './engine';
 type Message={role:'user'|'assistant';text:string};
-export default function CareerAssistant({onNavigate}:{onNavigate:()=>void}){
+export default function CareerAssistant({onNavigate}:{onNavigate?:()=>void}={}){
 const {p,state,posts}=useStore();const guide=careerGuide(p.occupation,p.industry);
 const [question,setQuestion]=useState(''),[messages,setMessages]=useState<Message[]>([]),[error,setError]=useState(''),[copied,setCopied]=useState(-1);
 const end=useRef<HTMLDivElement>(null);
 const items=scoped(posts,state.persona,p);const pending=items.filter(x=>analyse(x,p.industry,p.decisions[x.id],p.occupation).priority!=='No concern identified'&&!resolved(p.decisions[x.id]?.status));
 useEffect(()=>{setMessages([]);setError('');setQuestion('');setCopied(-1);},[p.occupation,p.industry,state.persona,p.source]);
-useEffect(()=>{end.current?.scrollIntoView({block:'nearest',behavior:'auto'});},[messages]);
+useEffect(()=>{if(messages.length)end.current?.scrollIntoView({block:'nearest',behavior:'auto'});},[messages]);
 function clear(){setMessages([]);setQuestion('');setError('');setCopied(-1);}
 const topics=[
 {label:'Make a review plan',question:'Give me a short online-presence review plan for my career.',text:['1. '+guide.checks[0].text,'2. '+guide.action,'3. Open Content Review. Add context, then mark reviewed or dismiss.'].join('\n\n')},
@@ -36,11 +36,11 @@ reply(text,answer);
 return <div className="career-assistant expanded-assistant">
 <div className="assistant-context"><div><strong>{p.occupation}</strong><span>{guide.industry}</span></div><button onClick={clear} disabled={!messages.length&&!question}>New chat</button></div>
 <div className="assistant-shortcuts"><Link onClick={onNavigate} to="/review?unresolved=yes">Review {pending.length} pending</Link><Link onClick={onNavigate} to="/industry">Change career</Link><Link onClick={onNavigate} to="/reports">Open report</Link></div>
-<details className="assistant-checklist"><summary>What to check for this career</summary><ul>{guide.checks.map(x=><li key={x.title}><strong>{x.title}</strong><p>{x.text}</p></li>)}</ul></details>
+
 <div className="assistant-topics" role="group" aria-label="Career guide tools">{topics.map(topic=><button key={topic.label} onClick={()=>useGuide(topic)}>{topic.label}</button>)}</div>
-<div className="assistant-thread" aria-label="Conversation">{!messages.length&&<p className="muted">Ask a question or choose a prompt.</p>}{messages.map((m,i)=><article className={'assistant-message '+m.role} key={i}><small>{m.role==='user'?'You':'Guided reply'}</small><div className="assistant-answer" role={m.role==='assistant'&&i===messages.length-1?'status':undefined}>{m.text}</div>{m.role==='assistant'&&<button className="quiet-action" onClick={async()=>{try{await navigator.clipboard.writeText(m.text);setCopied(i);}catch{setError('Copy unavailable. Select the answer text to copy it.');}}}>{copied===i?'Copied':'Copy answer'}</button>}</article>)}<div ref={end}/></div>
-<span className="scope-label">Guided chat · {p.occupation}</span><p className="fine">Prepared guidance, matched to your question. No AI or external requests.</p>
-<form onSubmit={e=>{e.preventDefault();ask();}}><label className="field"><span>Ask about your online presence</span><textarea rows={3} maxLength={1000} value={question} onChange={e=>setQuestion(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();ask();}}} placeholder={messages.length?'Ask a follow-up…':'What should I check as a '+p.occupation+'?'}/></label>
+<div className="assistant-thread" aria-label="Conversation">{messages.map((m,i)=><article className={'assistant-message '+m.role} key={i}><small>{m.role==='user'?'You':'Guided reply'}</small><div className="assistant-answer" role={m.role==='assistant'&&i===messages.length-1?'status':undefined}>{m.text}</div>{m.role==='assistant'&&<button className="quiet-action" onClick={async()=>{try{await navigator.clipboard.writeText(m.text);setCopied(i);}catch{setError('Copy unavailable. Select the answer text to copy it.');}}}>{copied===i?'Copied':'Copy answer'}</button>}</article>)}<div ref={end}/></div>
+<span className="scope-label">Guided chat · {p.occupation}</span>
+<form onSubmit={e=>{e.preventDefault();ask();}}><label className="field"><span>Ask about your online presence</span><textarea rows={3} maxLength={1000} value={question} onChange={e=>setQuestion(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.nativeEvent.isComposing){e.preventDefault();ask();}}} placeholder={messages.length?'Ask a follow-up…':'What should I check as a '+p.occupation+'?'}/></label>
 <div className="actions"><button className="primary" disabled={!question.trim()}>Send message</button></div></form>
 {error&&<p role="alert">{error}</p>}
 
