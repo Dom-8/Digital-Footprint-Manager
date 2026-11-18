@@ -78,3 +78,7 @@ Add server-only `OPENAI_API_KEY` and `OPENAI_MODEL` in Vercel, with `APP_ORIGIN`
 The sidebar Career assistant uses the selected role and industry. A submitted question, selected career checklist and up to six recent chat messages are sent to OpenAI. An optional post excerpt is included only after the user selects it and checks the send-post box. Email and account tokens are never included automatically. Answers stay in component memory and clear when the career changes or the panel closes. `store:false` is requested; provider data handling still applies. Five questions per IP per minute and 300 daily requests across the deployment cap usage; upstream billing is required. Redis failures fail closed.
 
 Without configuration, curated role checklists remain available and AI is clearly marked unavailable. Automated tests mock AI and storage; no live paid API call has been verified. API reference: https://developers.openai.com/api/reference/resources/responses/methods/create
+
+### Current interface
+
+The default Career assistant uses local guided chat and does not call `/api/assistant`. No API settings are needed for it. The optional AI endpoint above remains available for future development; configuring it does not turn the guided interface into a live AI chat.

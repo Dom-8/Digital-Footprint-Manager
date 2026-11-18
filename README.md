@@ -133,3 +133,7 @@ The old multi-step startup configuration and Product Tour are replaced by Tutori
 Every listed role has a maintained publication-review example in `src/roleExamples.ts`, combined with shared responsibilities in `src/careers.ts`. Dashboard shows one role tip; Career & Industry holds the fuller checklist. Custom roles use matching responsibilities and selected-field guidance.
 
 Open **Career assistant** in the sidebar for the current role's checklist and optional AI questions. AI uses the server-only `/api/assistant` endpoint; configure `OPENAI_API_KEY`, `OPENAI_MODEL`, `APP_ORIGIN` and Upstash Redis in Vercel. See [setup](docs/CONNECTIONS.md#career-assistant). No live AI call has been verified. Without credentials, the checklist works and the AI button is disabled. Questions include career context and up to six recent chat messages; a post excerpt is included only with explicit consent. Prepared guide tools work without AI. Chats are held in memory, with stop, retry, copy and clear controls.
+
+## Guided chat (default)
+
+Career assistant is now a local guided chat: visitors can type messages or use four prompts. Replies match supported topics to the selected career checklist and prepared templates. Follow-ups such as “make it shorter”, review actions, account imports and report help are supported. Unsupported requests explain the scope. No API key, assistant network request or post upload is required. AI backend code remains dormant for future development; it is not used by this interface.

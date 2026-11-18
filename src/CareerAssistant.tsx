@@ -3,37 +3,46 @@ import {Link} from 'react-router-dom';
 import {useStore} from './store';
 import {careerGuide} from './careerGuidance';
 import {scoped,analyse,resolved} from './engine';
-type Message={role:'user'|'assistant';text:string;kind?:'ai'|'guide'};
+type Message={role:'user'|'assistant';text:string};
 export default function CareerAssistant({onNavigate}:{onNavigate:()=>void}){
 const {p,state,posts}=useStore();const guide=careerGuide(p.occupation,p.industry);
-const [ready,setReady]=useState(false),[checking,setChecking]=useState(true),[question,setQuestion]=useState(''),[messages,setMessages]=useState<Message[]>([]),[error,setError]=useState(''),[busy,setBusy]=useState(false),[include,setInclude]=useState(false),[postId,setPostId]=useState(''),[copied,setCopied]=useState(-1);
-const request=useRef<AbortController>();const lastQuestion=useRef('');const end=useRef<HTMLDivElement>(null);
+const [question,setQuestion]=useState(''),[messages,setMessages]=useState<Message[]>([]),[error,setError]=useState(''),[copied,setCopied]=useState(-1);
+const end=useRef<HTMLDivElement>(null);
 const items=scoped(posts,state.persona,p);const pending=items.filter(x=>analyse(x,p.industry,p.decisions[x.id],p.occupation).priority!=='No concern identified'&&!resolved(p.decisions[x.id]?.status));
-const selected=items.find(x=>x.id===postId);
-async function check(signal?:AbortSignal){setChecking(true);try{const r=await fetch('/api/assistant',{signal});const d=await r.json();if(!signal?.aborted)setReady(r.ok&&d.configured===true);}catch{if(!signal?.aborted)setReady(false);}finally{if(!signal?.aborted)setChecking(false);}}
-useEffect(()=>{const controller=new AbortController();void check(controller.signal);return()=>{controller.abort();request.current?.abort();};},[]);
-useEffect(()=>{request.current?.abort();setMessages([]);setError('');setQuestion('');setBusy(false);setInclude(false);setPostId('');setCopied(-1);lastQuestion.current='';},[p.occupation,p.industry,state.persona,p.source]);
-useEffect(()=>{end.current?.scrollIntoView({block:'nearest',behavior:'auto'});},[messages,busy]);
-function clear(){request.current?.abort();setBusy(false);setMessages([]);setQuestion('');setError('');setInclude(false);setPostId('');setCopied(-1);lastQuestion.current='';}
-function stop(){request.current?.abort();setBusy(false);setError('Response stopped. You can retry.');}
+useEffect(()=>{setMessages([]);setError('');setQuestion('');setCopied(-1);},[p.occupation,p.industry,state.persona,p.source]);
+useEffect(()=>{end.current?.scrollIntoView({block:'nearest',behavior:'auto'});},[messages]);
+function clear(){setMessages([]);setQuestion('');setError('');setCopied(-1);}
 const topics=[
 {label:'Make a review plan',question:'Give me a short online-presence review plan for my career.',text:['1. '+guide.checks[0].text,'2. '+guide.action,'3. Open Content Review. Add context, then mark reviewed or dismiss.'].join('\n\n')},
 {label:'Check privacy',question:'What privacy details should I check in my posts?',text:guide.checks.map(x=>x.title+': '+x.text).join('\n\n')+'\n\nCheck faces, captions and background details on the original platform. This app analyses text only.'},
 {label:'Improve my profile',question:'How can I improve my public career profile?',text:guide.action+'\n\nProfile outline:\n'+p.occupation+' | [current study or verified qualification]\n[Your skill] · [a project you can discuss publicly]\n[Accurate dates and your contribution]\n\nReplace brackets with details you can support.'},
 {label:'Explain an old post',question:'Help me add context to an old post without inventing an excuse.',text:'Context template:\n“Posted in [year] during [situation]. This was [your actual role or purpose]. The excerpt leaves out [relevant context]. Since then, [a change you can support, if relevant].”\n\nUse only details you know. A note does not automatically resolve private information.'}
 ];
-function useGuide(topic:typeof topics[number]){lastQuestion.current='';setError('');setMessages(v=>[...v,{role:'user',text:topic.label},{role:'assistant',text:topic.text,kind:'guide'}]);}
-async function ask(text=question,retry=false){if(busy||!ready||!text.trim())return;const controller=new AbortController();request.current=controller;lastQuestion.current=text;setBusy(true);setError('');const history=messages.slice(-6).map(x=>({role:x.role,content:x.text.slice(0,1800)}));if(!retry)setMessages(v=>[...v,{role:'user',text}]);setQuestion('');try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json','X-DFM-Request':'1'},signal:controller.signal,body:JSON.stringify({question:text,career:p.occupation,industry:guide.industry,checks:guide.checks,history:retry?history.filter((_,i)=>i!==history.length-1):history,...(include&&selected?{selectedPost:{text:selected.text.slice(0,1500),platform:selected.platform,source:selected.source||'demo'}}:{})})});const d=await r.json();if(!r.ok)throw Error(d.error||'Assistant unavailable. Try again.');if(typeof d.answer!=='string'||!d.answer.trim())throw Error('No answer returned. Try again.');if(!controller.signal.aborted)setMessages(v=>[...v,{role:'assistant',text:d.answer,kind:'ai'}]);}catch(e){if(!controller.signal.aborted)setError((e as Error).message);}finally{if(!controller.signal.aborted)setBusy(false);}}
+function reply(text:string,answer:string){setError('');setMessages(v=>[...v,{role:'user',text},{role:'assistant',text:answer}]);setQuestion('');}
+function useGuide(topic:typeof topics[number]){reply(topic.label,topic.text);}
+function ask(){const text=question.trim();if(!text)return;const q=text.toLowerCase();
+let answer:string;
+if(/shorter|summaris|summariz|simpler/.test(q)){const last=[...messages].reverse().find(x=>x.role==='assistant');answer=last?last.text.split('\n\n').slice(0,2).join('\n\n'):'Start with this: '+guide.checks[0].text;}
+else if(/privacy|private|confidential|consent|photo|identif/.test(q))answer=topics[1].text;
+else if(/profile|bio|portfolio|linkedin|qualification|resume|cv/.test(q))answer=topics[2].text;
+else if(/context|old post|explain|caption|joke/.test(q))answer=topics[3].text;
+else if(/dismiss|resolved|mark reviewed|follow.?up/.test(q))answer='Mark reviewed when you have checked a suggestion. Dismiss when the concern does not apply. Choose Follow up if you still need information. These actions update your review record, not the original post.';
+else if(/report|pdf|csv|export/.test(q))answer='Open Reports to download a PDF or CSV of the current review. Use filters in Content Review to report on a smaller set of posts.';
+else if(/connect|import|account|archive/.test(q))answer='Open Accounts & Data to connect Mastodon or import outbox.json. You can use demo posts while setting up your own data.';
+else if(/plan|start|first|review|check|priorit|career|help/.test(q))answer=topics[0].text;
+else answer='I use prepared guidance for '+p.occupation+'. Try asking for a review plan, privacy checks, profile wording or context for an old post. I can also explain review actions and reports.';
+reply(text,answer);
+}
 return <div className="career-assistant expanded-assistant">
-<div className="assistant-context"><div><strong>{p.occupation}</strong><span>{guide.industry}</span></div><button onClick={clear} disabled={!messages.length&&!busy}>New chat</button></div>
+<div className="assistant-context"><div><strong>{p.occupation}</strong><span>{guide.industry}</span></div><button onClick={clear} disabled={!messages.length&&!question}>New chat</button></div>
 <div className="assistant-shortcuts"><Link onClick={onNavigate} to="/review?unresolved=yes">Review {pending.length} pending</Link><Link onClick={onNavigate} to="/industry">Change career</Link><Link onClick={onNavigate} to="/reports">Open report</Link></div>
 <details className="assistant-checklist"><summary>What to check for this career</summary><ul>{guide.checks.map(x=><li key={x.title}><strong>{x.title}</strong><p>{x.text}</p></li>)}</ul></details>
-<div className="assistant-topics" role="group" aria-label="Career guide tools">{topics.map(topic=><button key={topic.label} disabled={busy} onClick={()=>useGuide(topic)}>{topic.label}</button>)}</div>
-<div className="assistant-thread" aria-label="Conversation">{!messages.length&&<p className="muted">Choose a guide above or ask a career question below.</p>}{messages.map((m,i)=><article className={'assistant-message '+m.role} key={i}><small>{m.role==='user'?'You':m.kind==='ai'?'AI answer':'Career guide · Prepared guidance'}</small><div className="assistant-answer" role={m.role==='assistant'&&i===messages.length-1?'status':undefined}>{m.text}</div>{m.role==='assistant'&&<button className="quiet-action" onClick={async()=>{try{await navigator.clipboard.writeText(m.text);setCopied(i);}catch{setError('Copy unavailable. Select the answer text to copy it.');}}}>{copied===i?'Copied':'Copy answer'}</button>}</article>)}{busy&&<p role="status">Thinking…</p>}<div ref={end}/></div>
-<span className="scope-label">{checking?'Checking AI…':ready?'AI available':'Career guide · AI not configured'}</span>{!checking&&!ready&&<div className="assistant-unavailable"><span>Guide tools work without AI.</span><button className="quiet-action" onClick={()=>void check()}>Check AI again</button></div>}
-<form onSubmit={e=>{e.preventDefault();void ask();}}><label className="field"><span>Ask about your online presence</span><textarea rows={3} maxLength={1000} value={question} onChange={e=>setQuestion(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();void ask();}}} placeholder={messages.length?'Ask a follow-up…':'What should I check as a '+p.occupation+'?'}/></label>
-{ready&&<details className="assistant-post"><summary>Include a post (optional)</summary><label className="field"><span>Post to discuss</span><select aria-label="Post to discuss" value={postId} onChange={e=>{setPostId(e.target.value);setInclude(false);}}><option value="">Choose a post</option>{items.map(x=><option key={x.id} value={x.id}>{x.platform} · {x.text.slice(0,65)}</option>)}</select></label>{selected&&<><blockquote>{selected.text.slice(0,1500)}</blockquote><label className="check-row"><input type="checkbox" checked={include} onChange={e=>setInclude(e.target.checked)}/>Send this post’s text with my question</label></>}</details>}
-<p className="fine">{include&&selected?'Sends your question, this post, career and recent chat to OpenAI.':'Sends your question, career and recent chat to OpenAI. No posts sent.'} Chat clears when closed.</p><div className="actions"><button className="primary" disabled={!ready||busy||!question.trim()}>Ask AI</button>{busy&&<button type="button" onClick={stop}>Stop response</button>}</div></form>
-{error&&<div className="assistant-error"><p role="alert">{error}</p>{lastQuestion.current&&<button disabled={busy||!ready} onClick={()=>void ask(lastQuestion.current,true)}>Retry question</button>}</div>}
+<div className="assistant-topics" role="group" aria-label="Career guide tools">{topics.map(topic=><button key={topic.label} onClick={()=>useGuide(topic)}>{topic.label}</button>)}</div>
+<div className="assistant-thread" aria-label="Conversation">{!messages.length&&<p className="muted">Ask a question or choose a prompt.</p>}{messages.map((m,i)=><article className={'assistant-message '+m.role} key={i}><small>{m.role==='user'?'You':'Guided reply'}</small><div className="assistant-answer" role={m.role==='assistant'&&i===messages.length-1?'status':undefined}>{m.text}</div>{m.role==='assistant'&&<button className="quiet-action" onClick={async()=>{try{await navigator.clipboard.writeText(m.text);setCopied(i);}catch{setError('Copy unavailable. Select the answer text to copy it.');}}}>{copied===i?'Copied':'Copy answer'}</button>}</article>)}<div ref={end}/></div>
+<span className="scope-label">Guided chat · {p.occupation}</span><p className="fine">Prepared guidance, matched to your question. No AI or external requests.</p>
+<form onSubmit={e=>{e.preventDefault();ask();}}><label className="field"><span>Ask about your online presence</span><textarea rows={3} maxLength={1000} value={question} onChange={e=>setQuestion(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();ask();}}} placeholder={messages.length?'Ask a follow-up…':'What should I check as a '+p.occupation+'?'}/></label>
+<div className="actions"><button className="primary" disabled={!question.trim()}>Send message</button></div></form>
+{error&&<p role="alert">{error}</p>}
+
 </div>;
 }
