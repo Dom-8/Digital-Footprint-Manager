@@ -9,7 +9,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "test": "tsx --test tests/*.test.ts",
     "test:e2e": "playwright test",
-    "test:server": "node --test tests/connection.test.mjs"
+    "test:server": "node --test tests/connection.test.mjs tests/assistant.test.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

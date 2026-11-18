@@ -1,0 +1,3 @@
+import {useStore} from './store';
+import {careerGuide} from './careerGuidance';
+export default function CareerGuide({compact=false}:{compact?:boolean}){const {p}=useStore();const guide=careerGuide(p.occupation,p.industry);const content=<ul>{guide.checks.slice(0,compact?1:3).map(x=><li key={x.title}><strong>{x.title}</strong><p>{x.text}</p></li>)}{!compact&&<li>{guide.action}</li>}</ul>;return compact?<section className="career-guide card" aria-label="Career checklist">{content}</section>:<details className="career-guide card"><summary>Review checklist for {p.occupation}</summary>{content}</details>;}

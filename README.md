@@ -127,3 +127,9 @@ The dashboard presents the priority wheel first, with a direct next-review actio
 The sidebar collapses to an icon rail on desktop, remembers its width preference, and becomes a keyboard-contained drawer on mobile. Its motion respects both reduced-motion preferences and the browser setting. Page headers and workspace context use separate, stronger boundaries.
 
 The old multi-step startup configuration and Product Tour are replaced by Tutorial: a short purpose-first welcome, followed by choosing a career, reviewing an actual sample post and seeing the saved decision in Reports. Tutorial progress survives refresh. It temporarily uses demo data, preserves decisions and restores the previous data source when finished or exited. Demo profile switching is in Settings. Tutorial can be replayed from the sidebar or page header.
+
+## Career guidance and assistant
+
+Every listed role has a maintained publication-review example in `src/roleExamples.ts`, combined with shared responsibilities in `src/careers.ts`. Dashboard shows one role tip; Career & Industry holds the fuller checklist. Custom roles use matching responsibilities and selected-field guidance.
+
+Open **Career assistant** in the sidebar for the current role's checklist and optional AI questions. AI uses the server-only `/api/assistant` endpoint; configure `OPENAI_API_KEY`, `OPENAI_MODEL`, `APP_ORIGIN` and Upstash Redis in Vercel. See [setup](docs/CONNECTIONS.md#career-assistant). No live AI call has been verified. Without credentials, the checklist works and the AI button is disabled. Only a submitted question and career context are sent, with usage limits and no automatic post upload.

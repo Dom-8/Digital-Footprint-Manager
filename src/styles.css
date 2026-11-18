@@ -385,3 +385,5 @@ footer{color:var(--muted);border-color:var(--border)}
 [data-motion=reduced] .route-transition,[data-motion=reduced] .review-feedback,[data-motion=reduced] .feedback-letters{animation:none}
 
 .account-setup form{max-width:480px}.account-setup form .field{margin-bottom:18px}.account-setup .dashboard-grid{margin-top:20px}.account-setup .connection-panel{margin-top:20px}
+
+.career-guide{margin-bottom:24px}.career-guide summary{cursor:pointer;font-weight:600}.career-guide ul,.career-assistant ul{padding-left:20px}.career-guide li,.career-assistant li{margin-top:12px}.career-guide li p,.career-assistant li p{color:var(--muted);margin:4px 0}.career-assistant form{margin-top:20px}.assistant-answer{white-space:pre-wrap;margin-top:20px;padding:16px;border:1px solid var(--border);border-radius:8px}

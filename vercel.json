@@ -5,6 +5,9 @@
   "functions": {
     "api/connection.mjs": {
       "maxDuration": 30
+    },
+    "api/assistant.mjs": {
+      "maxDuration": 30
     }
   }
 }

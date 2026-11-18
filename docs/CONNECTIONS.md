@@ -70,3 +70,11 @@ Download the official Mastodon archive, extract outbox.json and select it in the
 ## Local development
 
 `npm run dev` runs the frontend only. Use a Vercel development environment for the API, with server variables configured. Do not put server variables in frontend Vite environment variables. Backend transport tests run with `npm run test:server`; these mock OAuth and Redis and do not claim real provider access.
+
+## Career assistant
+
+Add server-only `OPENAI_API_KEY` and `OPENAI_MODEL` in Vercel, with `APP_ORIGIN` set to the exact production origin (no trailing slash) and the existing Upstash Redis variables. Redeploy. Use a Responses API compatible model available to your API project. Never use VITE_ for secrets.
+
+The sidebar Career assistant uses the selected role and industry. Only a submitted question and career checklist are sent to OpenAI; posts, email and account tokens are not sent automatically. Answers stay in component memory and clear when the career changes or the panel closes. `store:false` is requested; provider data handling still applies. Five questions per IP per minute and 300 daily requests across the deployment cap usage; upstream billing is required. Redis failures fail closed.
+
+Without configuration, curated role checklists remain available and AI is clearly marked unavailable. Automated tests mock AI and storage; no live paid API call has been verified. API reference: https://developers.openai.com/api/reference/resources/responses/methods/create
