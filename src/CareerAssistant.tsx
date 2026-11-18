@@ -35,7 +35,7 @@ reply(text,answer);
 }
 return <div className="career-assistant expanded-assistant">
 <div className="assistant-context"><div><strong>{p.occupation}</strong><span>{guide.industry}</span></div><button onClick={clear} disabled={!messages.length&&!question}>New chat</button></div>
-<div className="assistant-shortcuts"><Link onClick={onNavigate} to="/review?unresolved=yes">Review {pending.length} pending</Link><Link onClick={onNavigate} to="/industry">Change career</Link><Link onClick={onNavigate} to="/reports">Open report</Link></div>
+<div className="assistant-shortcuts"><Link onClick={onNavigate} to="/profile">Profile & privacy</Link><Link onClick={onNavigate} to="/review?unresolved=yes">Review {pending.length} pending</Link><Link onClick={onNavigate} to="/industry">Change career</Link><Link onClick={onNavigate} to="/reports">Open report</Link></div>
 
 <div className="assistant-topics" role="group" aria-label="Career guide tools">{topics.map(topic=><button key={topic.label} onClick={()=>useGuide(topic)}>{topic.label}</button>)}</div>
 <div className="assistant-thread" aria-label="Conversation">{messages.map((m,i)=><article className={'assistant-message '+m.role} key={i}><small>{m.role==='user'?'You':'Guided reply'}</small><div className="assistant-answer" role={m.role==='assistant'&&i===messages.length-1?'status':undefined}>{m.text}</div>{m.role==='assistant'&&<button className="quiet-action" onClick={async()=>{try{await navigator.clipboard.writeText(m.text);setCopied(i);}catch{setError('Copy unavailable. Select the answer text to copy it.');}}}>{copied===i?'Copied':'Copy answer'}</button>}</article>)}<div ref={end}/></div>

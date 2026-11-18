@@ -139,3 +139,9 @@ Open **Career assistant** in the sidebar for the current role's checklist and op
 Career assistant is now a local guided chat: visitors can type messages or use four prompts. Replies match supported topics to the selected career checklist and prepared templates. Follow-ups such as “make it shorter”, review actions, account imports and report help are supported. Unsupported requests explain the scope. No API key, assistant network request or post upload is required. AI backend code remains dormant for future development; it is not used by this interface.
 
 Career assistant appears inline in the lower dashboard, with a conversational thread and composer. The sidebar shortcut scrolls to it; no assistant popup is used. Enter sends a message; Shift+Enter adds a line.
+
+## Industry feedback changes
+
+Profile & Privacy is a primary destination and a dashboard action. Its manual visibility/ownership checklist and CV/LinkedIn start-year comparison work without a social connection, use blank initial values, and save per profile in the browser. No LinkedIn retrieval or automatic privacy changes are claimed. Invalid years do not produce match results. Career Readiness links to these practical checks instead of presenting fictional date comparisons as the main task.
+
+Context Lens includes “Not my post”: it dismisses the suggestion with a self-reported ownership note, preserves existing context, and supports undo. Connected account handles are shown with a confirmation prompt. This responds to feedback about mistaken identity, limited access to private profiles, varied employer practices and usability. The introduction describes optional personal review; career priorities and context remain available. These changes address feedback, but do not establish adoption or recruitment effectiveness.
