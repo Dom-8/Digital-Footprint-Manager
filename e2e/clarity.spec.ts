@@ -73,7 +73,7 @@ const setup=page.getByRole('region',{name:'Account setup'});
 await setup.getByRole('button',{name:'Save details & continue'}).click();await expect(setup.getByLabel('Your name',{exact:true})).toBeVisible();
 await setup.getByLabel('Your name',{exact:true}).fill('Robin Test');await setup.getByLabel('Email address',{exact:true}).fill('robin@example.com');await setup.getByRole('button',{name:'Save details & continue'}).click();
 await expect(setup.getByRole('heading',{name:/Choose your career,/})).toContainText('Robin');await page.reload();await expect(setup.getByRole('heading',{name:/Choose your career,/})).toBeVisible();
-await setup.getByRole('button',{name:'Continue to accounts'}).click();await expect(setup.getByText("Account connections aren't ready on this site yet.",{exact:true})).toBeVisible();
+await setup.getByRole('button',{name:'Continue to accounts'}).click();await setup.getByRole('button',{name:'Connected account',exact:true}).click();await expect(setup.getByText("Account connections aren't ready on this site yet.",{exact:true})).toBeVisible();
 await expect(setup.getByRole('button',{name:'Continue with my posts'})).toBeDisabled();await expect(setup.getByRole('button',{name:'Demo data',exact:true})).toHaveCount(0);
 await setup.getByRole('button',{name:'Save & exit'}).click();await page.getByRole('button',{name:'Tutorial',exact:true}).click();await expect(setup.getByRole('heading',{name:'Add your posts.'})).toBeVisible();
 });
